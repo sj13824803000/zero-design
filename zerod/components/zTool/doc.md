@@ -6,9 +6,7 @@
 
 对`axios`(优秀的 ajax 库)的二次封装，并统一了`get`、`post`、`put`、`delete`、`patch`请求方式的传参方式
 
-zTool.httpAjax()返回一个 Promise 对象,当`noCallback === false`时,默认对响应结果的处理：
-
-只有 `result.data.code === 0` 时才会进入`then((re)=>{})`回调，其他情况都会进入`catch((re)=>{})`回调,并且`then((re)=>{})`和`catch((re)=>{})`回调中的参数`re`其实是`result.data`
+zTool.httpAjax()返回一个 Promise 对象
 
 ```js
 import { zTool } from "zerod";

@@ -51,9 +51,9 @@ function httpAjax(method, url, query, config, noCallback) {
 				P = axios[method](url, query, config);
 		}
         P.then((result) => {
-            resolve(result,resolve,reject);
+            resolve(result);
         }).catch((result) => {
-            reject(result,resolve,reject);
+            reject(result);
         });
 	});
 	return promise;
