@@ -106,7 +106,7 @@ export const Zform = Form.create()(
 							submitBtnRender(this.methods.onSubmit, this.props)
 						) : submitBtnName ? (
 							<Col span={24} className="z-text-center">
-								<Button type="primary" htmlType="submit">
+								<Button type="primary" htmlType="submit" style={{minWidth:"100px"}}>
 									{typeof submitBtnName === "function" ? submitBtnName() : submitBtnName}
 								</Button>
 							</Col>
