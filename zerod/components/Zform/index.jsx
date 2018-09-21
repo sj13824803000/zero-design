@@ -3,7 +3,8 @@ import { Form, Modal, Input, Button, Row, Col } from "antd";
 import PropTypes from "prop-types";
 import cssClass from "./style.scss";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { animateTimout } from "../constant";
+import { animateTimout, const_initItems, const_execAsync } from "../constant";
+import ZpageLoading from "../ZpageLoading";
 export const Zform = Form.create()(
 	class extends React.Component {
 		static propTypes = {
@@ -23,6 +24,10 @@ export const Zform = Form.create()(
 			defaultSpan: { xxl: 6, xl: 8, lg: 12, md: 24 },
 			submitBtnName: "保存",
 		};
+		state = {
+			items: [],
+		};
+
 		methods = {
 			onSubmit: (e) => {
 				e.preventDefault();
@@ -42,25 +47,37 @@ export const Zform = Form.create()(
 				});
 			},
 		};
+		setFormValues() {
+			this.props.formDefaultValues && this.props.form.setFieldsValue(this.props.formDefaultValues);
+		}
+		execAsync(callback) {
+			const_initItems.call(this, this.props.items,<Input placeholder="加载中" disabled />,this.props.form);
+			const_execAsync.call(this, callback);
+		}
+		componentDidMount() {
+			this.execAsync(this.setFormValues.bind(this));
+			this.props.getFormInstance && this.props.getFormInstance(this.props.form);
+			this.props.getInbuiltTool &&
+				this.props.getInbuiltTool({
+					form: this.props.form,
+					submit: this.methods.onSubmit,
+				});
+		}
+		componentDidUpdate(prevProps) {
+			if (this.props.formDefaultValues !== prevProps.formDefaultValues && !this.allAsync.length) {
+				this.setFormValues();
+			}
+		}
 		getFormItems() {
 			const { getFieldDecorator } = this.props.form;
-			return this.props.items.map((item, i) => {
-				const control = item.render(this.props.form, this);
-				let span =
-					typeof this.props.defaultSpan === "number"
-						? { md: this.props.defaultSpan }
-						: this.props.defaultSpan;
-				span = item.span
-					? typeof item.span === "number"
-						? { md: item.span }
-						: item.span
-					: control.props.prefixCls == "ant-input" && control.type.TextArea == undefined
-						? { md: 24 }
-						: span;
+			return this.state.items.map((item, i) => {
+				const control = item.control;
+				let span = item.span;
 				const isFormItem = typeof item.isFormItem === "boolean" ? item.isFormItem : true;
 				return (
 					<CSSTransition key={i} timeout={animateTimout.flipInTime} classNames="fadeIn-to-down">
 						<Col {...span} className={item.className}>
+							<ZpageLoading showLoading={item.loading} size="small" />
 							{isFormItem ? (
 								<Form.Item label={item.label}>
 									{getFieldDecorator(item.key, item.options)(control)}
@@ -72,23 +89,6 @@ export const Zform = Form.create()(
 					</CSSTransition>
 				);
 			});
-		}
-		setFormValues() {
-			this.props.formDefaultValues && this.props.form.setFieldsValue(this.props.formDefaultValues);
-		}
-		componentDidMount() {
-			this.setFormValues();
-			this.props.getFormInstance && this.props.getFormInstance(this.props.form);
-			this.props.getInbuiltTool &&
-				this.props.getInbuiltTool({
-					form: this.props.form,
-					submit: this.methods.onSubmit,
-				});
-		}
-		componentDidUpdate(prevProps) {
-			if (this.props.formDefaultValues !== prevProps.formDefaultValues) {
-				this.setFormValues();
-			}
 		}
 		render() {
 			const { submitBtnName, onSubmit, className, style, submitBtnRender } = this.props;
