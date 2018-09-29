@@ -190,7 +190,7 @@ class ZlistPanel extends React.Component {
                     return data;
                 }
                 if (data.children && data.children.length > 0) {
-                    let result = findData(key, data.children);
+                    let result = this.methods.findData(key, data.children);
                     if (result !== undefined) {
                         return result;
                     }
