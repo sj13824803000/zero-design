@@ -108,10 +108,10 @@ class ZlistPanel extends React.Component {
 				.listApiInterface(
 					Object.assign(
 						{
-							currPage: this.page.pageNumber,
+                            pageNumber: this.page.pageNumber,
 							pageSize: this.page.pageSize,
-							sortFieldName: this.sorter.field,
-							sortType: this.sorter.order === "descend" ? "DESC" : "ASC",
+							sortName: this.sorter.field,
+							sortOrder: this.sorter.order === "descend" ? "DESC" : "ASC",
 						},
 						querys,
 					),
@@ -125,12 +125,12 @@ class ZlistPanel extends React.Component {
 						this.page.totalCount = list.length;
 						this.page.totalPage = 1;
 					} else {
-						if (data.list === undefined) {
-							return Promise.reject({ msg: "接口返回的列表数据缺少list属性" });
-						} else if (Array.isArray(data.list)) {
-							list = data.list;
-							this.page.totalCount = data.totalCount;
-							this.page.totalPage = data.totalPage;
+						if (data.rows === undefined) {
+							return Promise.reject({ msg: "接口返回的列表数据缺少rows属性" });
+						} else if (Array.isArray(data.rows)) {
+							list = data.rows;
+							this.page.totalCount = data.total;
+							this.page.totalPage = data.pages;
 						}
 					}
 					this.setState({
