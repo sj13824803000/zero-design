@@ -135,7 +135,7 @@ class ZlistPanel extends React.Component {
                             this.page.totalPage = data.pages;
                         }
                     }
-                    this.methods.loadData(merge, list);
+                    this.methods.setDataState(list, merge);
                 })
                 .catch((re) => {
                     message.error(re && re.msg ? re.msg : "获取数据失败");
@@ -143,13 +143,6 @@ class ZlistPanel extends React.Component {
                 .finally((re) => {
                     this.methods.showLoading(false);
                 });
-        },
-        //重新渲染数据,可以让调用者,自动对数据进行修改和重新渲染
-        loadData: (merge, list) => {
-            this.setState({
-                listData: merge ? [...this.state.listData, ...list] : list,
-                noMore: this.isInfinite && !list.length,
-            });
         },
         //表格分页、排序等改变时触发
         onTableChange: (pagination, filters, sorter) => {
@@ -183,19 +176,66 @@ class ZlistPanel extends React.Component {
             this.page.pageSize = size;
             this.methods.getListData();
         },
+        /**
+         * 从已加载的数据中查询指定数据
+         * @param key 指定数据的key
+         * @param list 如果为空,自动调用currentData替代
+         */
+        findData: (key, list) => {
+            let keyName = this.props.tableParams.rowKey ? this.props.tableParams.rowKey : "id";
+            list = list ? list : this.methods.currentListData();
+            for (let i = 0; i < list.length; i++) {
+                let data = list[i];
+                if (data[keyName] === key) {
+                    return data;
+                }
+                if (data.children && data.children.length > 0) {
+                    let result = findData(key, data.children);
+                    if (result !== undefined) {
+                        return result;
+                    }
+                }
+            }
+        },
+        /**
+         * 从parent节点中增加rows
+         * @param rows
+         * @param parentKey
+         */
+        addChildrenData: (rows, parentKey) => {
+            let list = this.methods.currentListData();
+            let data = this.methods.findData(parentKey, list);
+            if (data) {
+                data.children = rows;
+                this.methods.setDataState(list);
+            }
+        },
         //移除一条数据
         removeOneData: (row) => {
             let key = this.props.tableParams.rowKey;
             key = key ? key : "id";
+            const removeOneForTree = (rows, target) => {
+                let index = rows.findIndex(item => item[key] === target[key]);
+                if (index >= 0) {
+                    rows.splice(index, 1);
+                    return true;
+                }
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].children && rows[i].children.length > 0) {
+                        let childrenRemoveResult = removeOneForTree(rows[i].children, target);
+                        if (childrenRemoveResult && rows[i].children.length === 0) {
+                            //删除成功,并长度以为0,则把children设置成null,防止页面渲染时,显示一个+号
+                            rows[i].children = null;
+                        }
+                        return childrenRemoveResult;
+                    }
+                }
+                return false;
+            };
             const list = this.methods.currentListData();
-            const index = list.findIndex((item) => {
-                return item[key] === row[key];
-            });
-            if (index >= 0) {
-                list.splice(index, 1);
-                this.setState({
-                    listData: list,
-                });
+            let result = removeOneForTree(list, row);
+            if (result) {
+                this.methods.setDataState(list);
             }
         },
         // 删除按钮触发
@@ -253,9 +293,10 @@ class ZlistPanel extends React.Component {
         currentListData: () => {
             return deepCopy(this.state.listData);
         },
-        setDataState: (data) => {
+        setDataState: (data, merge) => {
             this.setState({
-                listData: data,
+                listData: merge ? [...this.state.listData, ...data] : data,
+                noMore: this.isInfinite && !data.length,
             });
         },
     };
