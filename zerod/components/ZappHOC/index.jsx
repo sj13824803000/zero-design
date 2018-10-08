@@ -16,6 +16,8 @@ function ZappHOC(pageConfig) {
 				list: "list",
 				totalCount: "totalCount",
 				totalPage: "totalPage",
+                sortFieldName:"sortFieldName",
+                sortType:"sortType",
 			},
 		},
 	};
