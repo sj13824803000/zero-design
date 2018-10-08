@@ -77,9 +77,9 @@ let defaultConfig = {
 	<tbody>
 		<tr>
 			<td>insertLocation</td>
-			<td>这个组件渲染在的位置，mainRoute:main子路由，mainModal:在main子路由区域打开的右边窗口，appModal:在最外层打开的右边窗口</td>
-			<td>mainRoute | mainModal | appModal</td>
-			<td>mainRoute</td>
+			<td>这个组件渲染在的位置，会影响内置事件对显示loading,打开/关闭rightModal的操作。例如：insertLocation="mainRoute"，点击新增按钮时会打开 mainModal。以此类推：mainRoute > mainModal > mainModal_top > appModal > appModal_top</td>
+			<td>mainRoute | mainModal | mainModal_top | appModal  | appModal_top</td>
+			<td>mainModal</td>
 		</tr>
 		<tr>
 			<td>pageHeader</td>
@@ -97,6 +97,18 @@ let defaultConfig = {
 			<td>moreContentRender</td>
 			<td>在表单之后添加更多内容的渲染函数,有两个参数detail：detailApiInterface接口获取的详情数据、panel:组件的实例对象</td>
 			<td>(detail,tool) =>{return;}</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>panelBeforeRender</td>
+			<td>列表面板上面的渲染函数</td>
+			<td>function(detail,tool){return ReacNode|Element;}</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>panelAfterRender</td>
+			<td>列表面板下面的渲染函数</td>
+			<td>function(detail,tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 	</tbody>
@@ -134,7 +146,7 @@ let defaultConfig = {
 		</tr>
 		<tr>
 			<td>detailApiInterface</td>
-			<td>获取详细数据的后台接口函数,必须返回Promise,参数有 detailId : ZeditSimpleFormHOC(pageConfig)得到组件的detailId属性，props ：ZeditSimpleFormHOC(pageConfig)得到组件的其他属性</td>
+			<td>获取详细数据的后台接口函数,必须返回Promise,参数有 detailId : ZeditSimpleFormHOC(pageConfig)得到组件的detailId属性，props ：ZeditSimpleFormHOC(pageConfig)得到组件的其他属性。接口响应体的data属性必须 object类型</td>
 			<td>(detailId, props,tool) =>{return Promise;}</td>
 			<td>--</td>
 		</tr>

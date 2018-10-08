@@ -74,6 +74,14 @@ export function ZeditSimpleFormHOC(pageConfig) {
 		moreContentRender: (detail, tool) => {
 			return null;
 		},
+		// 更多渲染内容函数
+		panelBeforeRender: (detail, tool) => {
+			return null;
+		},
+		// 更多渲染内容函数
+		panelAfterRender: (detail, tool) => {
+			return null;
+		},
 	};
 	defaultConfig = mergeConfig(defaultConfig, pageConfig);
 	class myForm extends React.Component {
@@ -81,7 +89,9 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			detailId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 		};
 		config = defaultConfig;
-		detailData = {};
+		state = {
+			detailData: {},
+		};
 		methods = {
 			showLoading: (show) => {
 				const_showLoading(this.config.insertLocation, this.props)(show);
@@ -94,12 +104,19 @@ export function ZeditSimpleFormHOC(pageConfig) {
 				this.config.form
 					.detailApiInterface(this.props.detailId, this.props, this.tool)
 					.then((re) => {
-						this.detailData = re.data;
 						const valueData = {};
 						this.config.form.items.forEach((item) => {
 							valueData[item.key] = re.data[item.detailKey ? item.detailKey : item.key];
 						});
-						this.form.setFieldsValue(valueData);
+
+						this.setState(
+							{
+								detailData: re.data,
+							},
+							() => {
+								this.form.setFieldsValue(valueData);
+							},
+						);
 					})
 					.catch((re) => {
 						message.error(re && re.msg ? re.msg : "获取数据失败");
@@ -147,6 +164,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			showLoading: this.methods.showLoading,
 			closeRightModal: this.methods.closeRightModal,
 			showRightModal: this.props.showRightModal,
+			methods: this.methods,
 		};
 
 		componentDidMount() {
@@ -155,24 +173,37 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			}
 		}
 		render() {
+			const {
+				type,
+				panelHeader,
+				detailApiInterface,
+				submitApiInterface,
+				showSubmitBtn,
+				afterSubmitSuccess,
+				getFormInstance,
+				onSubmit,
+				submitBtnName,
+				...formOthers
+			} = this.config.form;
 			return (
 				<PageWraper pageHeader={this.config.pageHeader}>
+					{typeof this.config.panelBeforeRender === "function" &&
+						this.config.panelBeforeRender(this.state.detailData, this.tool)}
 					<div className="z-panel">
 						{this.getPanleHeader()}
 						<div className="z-panel-body">
 							<Zform
+								{...formOthers}
 								onSubmit={this.methods.onSubmit}
-								items={this.config.form.items}
 								getFormInstance={this.getFormInstance}
-								submitBtnRender={this.config.form.submitBtnRender}
 								submitBtnName={this.config.form.showSubmitBtn ? this.config.form.submitBtnName : ""}
-								submitMsg={this.config.form.submitMsg}
-								formDefaultValues={this.config.form.formDefaultValues}
 							/>
+							{typeof this.config.moreContentRender === "function" &&
+								this.config.moreContentRender(this.state.detailData, this.tool)}
 						</div>
 					</div>
-					{typeof this.config.moreContentRender === "function" &&
-						this.config.moreContentRender(this.detailData, this.tool)}
+					{typeof this.config.panelAfterRender === "function" &&
+						this.config.panelAfterRender(this.state.detailData, this.tool)}
 				</PageWraper>
 			);
 		}
