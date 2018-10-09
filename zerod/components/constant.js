@@ -12,7 +12,7 @@ export const const_insertLocations = {
 export const const_getInsertLocation = function() {
 	if (this.hocWrapperEl) {
 		let _parent = this.hocWrapperEl.parentElement;
-		while (!_parent.dataset.zgt_modal && _parent) {
+		while (_parent && !_parent.dataset.zgt_modal) {
 			_parent = _parent.parentElement;
 		}
 		this.insertLocation = _parent && _parent.dataset.zgt_modal ? _parent.dataset.zgt_modal : "mainRoute";
