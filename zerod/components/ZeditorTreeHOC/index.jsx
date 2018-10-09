@@ -23,16 +23,17 @@ export function ZeditorTreeHOC(pageConfig) {
 	class List extends React.Component {
 		config = defaultConfig;
 		render() {
-			return (
-				<PageWraper pageHeader={this.config.pageHeader}>
-					<ZtreePanel
-                        colFormItems={this.config.searchForm.items}
-                        searchForm={this.config.searchForm}
-						{...this.config.tree}
-						insertLocation={this.config.insertLocation}
-					/>
-				</PageWraper>
-			);
+            let {tree, insertLocation, searchForm, pageHeader, ...otherConfig} = this.config;
+            return (
+                <PageWraper pageHeader={pageHeader} {...otherConfig}>
+                    <ZtreePanel
+                        colFormItems={searchForm.items}
+                        searchForm={searchForm}
+                        {...tree}
+                        insertLocation={insertLocation}
+                    />
+                </PageWraper>
+            );
 		}
 	}
 
