@@ -955,25 +955,23 @@ export function formatterMapKey(data, mapKey = {}, parentPath = "/") {
 	});
 }
 
-// 合并defaultConfig的属性生成新的config
+/**
+ * 将defaultConfig对象合并到theConfig,并生成一个新对象,合并时支持对象属性是否也合并
+ * @param defaultConfig 默认配置,可以使用_merge来控制对象类型的属性也支持合并
+ * @param theConfig
+ */
 export const mergeConfig = (defaultConfig, theConfig) => {
-	let newConfig = {};
-	if (theConfig)
-		Object.keys(defaultConfig).forEach((key) => {
-			if (dataTypeTest(defaultConfig[key]) === "object") {
-				newConfig[key] = Object.assign(
-					{},
-					defaultConfig[key],
-					theConfig[key] !== undefined ? deepCopy(theConfig[key]) : {},
-				);
-			} else {
-				newConfig[key] = theConfig[key] !== undefined ? deepCopy(theConfig[key]) : defaultConfig[key];
-			}
-		});
-	else {
-		newConfig = defaultConfig;
-	}
-	return newConfig;
+    let newConfig = deepCopy(theConfig ? theConfig : {});
+    Object.keys(defaultConfig).forEach(key => {
+        if (newConfig[key] === undefined) {
+            //没有属性,则取默认的
+            newConfig[key] = deepCopy(defaultConfig[key]);
+        } else if (dataTypeTest(newConfig[key]) === "object" && defaultConfig._merge === true) {
+            //有该属性,并且这个属性是对象,默认配置中标识该对象使用_merge
+            newConfig[key] = mergeConfig(de);
+        }
+    });
+    return newConfig;
 };
 export const zTool = {
 	getStyle,
