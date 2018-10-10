@@ -185,7 +185,8 @@ class ZlistPanel extends React.Component {
             this.methods.getListData();
         },
         //递归获取列表中tableParams.rowKey对应的值等于value的那行数据，
-        findData: (value, list, {isRemove, row}) => {
+        findData: (value, list, otherConfig) => {
+            let {isRemove, row} = otherConfig?otherConfig:{};
             let key = this.props.tableParams.rowKey;
             key = key ? key : "id";
             list = list ? list : this.methods.currentListData();
