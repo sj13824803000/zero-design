@@ -18,6 +18,8 @@ function ZappHOC(pageConfig) {
 				totalPage: "totalPage",
                 sortFieldName:"sortFieldName",
                 sortType:"sortType",
+                pageNumber:"currPage",
+                pageSize:"pageSize",
 			},
 		},
 	};
