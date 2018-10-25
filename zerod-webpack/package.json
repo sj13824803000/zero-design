@@ -8,8 +8,8 @@
     "dev": "webpack-dev-server --inline --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "node build/build.js",
-    "install-zerod": "cnpm --registry http://172.16.8.10:8081/repository/npm-all/ install zerod@* --no-save",
-    "npm-zerod": "npm --registry http://172.16.8.10:8081/repository/npm-all/ install zerod@* --no-save",
+    "install-zerod": "cnpm --registry http://192.168.0.32:8081/repository/npm-public/ install zerod@* --no-save",
+    "npm-zerod": "npm --registry http://192.168.0.32:8081/repository/npm-public/ install zerod@* --no-save",
     "cnpm-zerod": "npm run install-zerod",
     "copy": "node build/copy.js watchChange"
   },

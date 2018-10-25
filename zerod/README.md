@@ -22,7 +22,7 @@
 
 7、支持使用 `scss` 变量代替 `less` 变量自定义 `antd` 的主题
 
-8、支持跨项目共享代码发布到我们的私有服务器http://172.16.8.10:8081/repository/hosted-npm/
+8、支持跨项目共享代码发布到我们的私有服务器http://192.168.0.32:8081/repository/npm-sjkj/
 
 9、支持状态管理，使用 `redux` + `react-redux`
 

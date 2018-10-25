@@ -22,7 +22,7 @@
 
 7、支持使用 `scss` 变量代替 `less` 变量自定义 `antd` 的主题
 
-8、支持跨项目共享代码发布到我们的私有服务器http://172.16.8.10:8081/repository/hosted-npm/
+8、支持跨项目共享代码发布到我们的私有服务器http://192.168.0.32:8081/repository/npm-sjkj/
 
 `git`地址：<a href="http://172.16.26.120/components/zerod-admin-webpack.git" target="_blank">http://172.16.26.120/components/zerod-admin-webpack.git</a>
 
@@ -78,9 +78,9 @@
 
 由于我们的`zerod`存储在`npm私有服务器`中，执行`npm install`之前需要更改`registry`地址
 
-先`npm config get registry`查看当前的`registry`地址是哪个，如果不是`http://172.16.8.10:8081/repository/npm-all/`(公司深圳服务器，外地的需 VPN 访问)，请
+先`npm config get registry`查看当前的`registry`地址是哪个，如果不是`http://192.168.0.32:8081/repository/npm-public/`(公司深圳服务器，外地的需 VPN 访问)，请
 
-先`npm config set registry http://172.16.8.10:8081/repository/npm-all/`执行完后再`npm install`
+先`npm config set registry http://192.168.0.32:8081/repository/npm-public/`执行完后再`npm install`
 
 1、启动`npm run dev 或 npm start`
 

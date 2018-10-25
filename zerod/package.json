@@ -6,7 +6,7 @@
 	"main": "index.js",
 	"module": "index.js",
 	"scripts": {
-		"login": "npm login --registry=http://172.16.8.10:8081/repository/hosted-npm/"
+		"login": "npm login --registry=http://192.168.0.32:8081/repository/npm-sjkj/"
 	},
 	"repositories": [
 		{
@@ -40,6 +40,6 @@
 		"not ie <= 8"
 	],
 	"publishConfig": {
-		"registry": "http://172.16.8.10:8081/repository/hosted-npm/"
+		"registry": "http://192.168.0.32:8081/repository/npm-sjkj/"
 	}
 }
