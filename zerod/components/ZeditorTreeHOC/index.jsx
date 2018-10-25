@@ -2,11 +2,11 @@ import React from "react";
 // import { Input } from "antd";
 
 // 工具
-import { mergeConfig } from "../zTool";
+import {mergeConfig} from "../zTool";
 
 import {ZpageWraperHOC} from "../ZpageWrapper";
 
-import { const_getListConfig } from "../constant";
+import {const_getListConfig} from "../constant";
 // childs
 import ZtreePanel from "./ZtreePanel";
 
@@ -16,28 +16,31 @@ import ZtreePanel from "./ZtreePanel";
 const PageWraper = ZpageWraperHOC();
 
 export function ZeditorTreeHOC(pageConfig) {
-	pageConfig = pageConfig ? pageConfig : {};
-	let defaultConfig = const_getListConfig("tree","ZtreePanel");
+    pageConfig = pageConfig ? pageConfig : {};
+    let defaultConfig = const_getListConfig("tree", "ZtreePanel");
 
-	defaultConfig = mergeConfig(defaultConfig, pageConfig);
-	class List extends React.Component {
-		config = defaultConfig;
-		render() {
-            let {tree, insertLocation, searchForm, pageHeader, ...otherConfig} = this.config;
+    defaultConfig = mergeConfig(defaultConfig, pageConfig);
+
+    class List extends React.Component {
+        config = defaultConfig;
+
+        render() {
+            let {className} = this.config.className;
+            className = className ? className : {};
             return (
-                <PageWraper pageHeader={pageHeader} {...otherConfig}>
+                <PageWraper className={className} pageHeader={this.config.pageHeader} pageFooter={this.config.pageFooter} hasBodyPadding={this.config.hasBodyPadding}>
                     <ZtreePanel
-                        colFormItems={searchForm.items}
-                        searchForm={searchForm}
-                        {...tree}
-                        insertLocation={insertLocation}
+                        colFormItems={this.config.searchForm.items}
+                        searchForm={this.config.searchForm}
+                        {...this.config.tree}
+                        insertLocation={this.config.insertLocation}
                     />
                 </PageWraper>
             );
-		}
-	}
+        }
+    }
 
-	return List;
+    return List;
 }
 
 export default ZeditorTreeHOC;

@@ -1,6 +1,12 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { const_showLoading, const_insertLocations,const_getInsertLocation } from "../constant";
+import {
+	const_showLoading,
+	const_insertLocations,
+	const_getInsertLocation,
+	const_getModalType,
+	const_getMainTool,
+} from "../constant";
 import PropTypes from "prop-types";
 import { Zform } from "../Zform";
 import { Input, message } from "antd";
@@ -10,7 +16,7 @@ import { mergeConfig } from "../zTool";
 // 上下文
 import ZerodMainContext from "../ZerodMainContext";
 
-import {ZpageWraperHOC} from "../ZpageWrapper";
+import { ZpageWraperHOC } from "../ZpageWrapper";
 const PageWraper = ZpageWraperHOC();
 
 export function ZeditSimpleFormHOC(pageConfig) {
@@ -123,9 +129,17 @@ export function ZeditSimpleFormHOC(pageConfig) {
 						this.methods.showLoading(false);
 					});
 			},
-			closeRightModal: () => {
+			openModal: (content) => {
+				content &&
+					this.props.showRightModal &&
+					this.props.showRightModal(true, const_getModalType(this.insertLocation), content);
+			},
+			closeCurrentModal: () => {
 				if (this.insertLocation !== const_insertLocations.mainRoute)
 					this.props.showRightModal && this.props.showRightModal(false, this.insertLocation);
+			},
+			closeRightModal: () => {
+				this.methods.closeCurrentModal();
 			},
 			onSubmit: (values) => {
 				const afterSuccess = this.config.form.afterSubmitSuccess;
@@ -155,25 +169,26 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			this.form = form;
 		};
 		tool = {
+			...const_getMainTool.call(this),
 			getFormInstance: () => {
 				return this.form;
 			},
-			submit: this.methods.onSubmit,
+			submit: this.methods.onSubmit, //已在methods属性中提供，为了向下兼容
 			showLoading: this.methods.showLoading,
 			closeRightModal: this.methods.closeRightModal,
-			showRightModal: this.props.showRightModal,
-            methods: this.methods,
-            $router:{
-                history:this.props.history,
-                location:this.props.location,
-            }
+			methods: this.methods,
+			$router: {
+				history: this.props.history,
+				location: this.props.location,
+			},
 		};
-
-		componentDidMount() {
-			const_getInsertLocation.call(this);
+		didAsync = () => {
 			if (this.config.form.type === "update") {
 				this.methods.getFormDetailData();
 			}
+		};
+		componentDidMount() {
+			const_getInsertLocation.call(this);
 		}
 		render() {
 			const {
@@ -194,7 +209,11 @@ export function ZeditSimpleFormHOC(pageConfig) {
 						this.hocWrapperEl = el;
 					}}
 				>
-					<PageWraper pageHeader={this.config.pageHeader}>
+					<PageWraper
+						pageHeader={this.config.pageHeader}
+						pageFooter={this.config.pageFooter}
+						hasBodyPadding={this.config.hasBodyPadding}
+					>
 						{typeof this.config.panelBeforeRender === "function" &&
 							this.config.panelBeforeRender(this.state.detailData, this.tool)}
 						<div className="z-panel">
@@ -205,6 +224,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 									onSubmit={this.methods.onSubmit}
 									getFormInstance={this.getFormInstance}
 									submitBtnName={this.config.form.showSubmitBtn ? this.config.form.submitBtnName : ""}
+									afterItemsRendered={this.didAsync}
 								/>
 								{typeof this.config.moreContentRender === "function" &&
 									this.config.moreContentRender(this.state.detailData, this.tool)}

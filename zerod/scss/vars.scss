@@ -1,26 +1,36 @@
 
 @import "../ant-theme-vars";
 
-//:global {
-//	body{
-//        .ant-btn-primary:not([disabled]) {
-//            background-image: linear-gradient(90deg, $--blue-tint 0%, $--blue-deep 100%);
-//            &:hover,&:focus,&:active{
-//                background-image:none;
-//            }
-//        }
-//        .ant-btn-danger:not([disabled]){
-//            background-image: linear-gradient(90deg, $--red-tint 0%, $--red-color 100%);
-//            &:hover,&:focus{
-//                background-image:none;
-//                background-color:$--red-tint;
-//                border-color:$--red-tint;
-//            }
-//            &:active{
-//                background-image:none;
-//                background-color:$--red-color;
-//                border-color:$--red-color;
-//            }
-//        }
-//    }
-//}
+:global {
+	body{
+        .ant-btn-primary:not([disabled]) {
+            //background-image: linear-gradient(90deg, $--blue-tint 0%, $--blue-deep 100%);
+            &:hover,&:focus,&:active{
+                background-image:none;
+            }
+        }
+        .ant-btn-danger:not([disabled]){
+            //background-image: linear-gradient(90deg, $--red-tint 0%, $--red-color 100%);
+            &:hover,&:focus{
+                background-image:none;
+                background-color:$--red-tint;
+                border-color:$--red-tint;
+            }
+            &:active{
+                background-image:none;
+                background-color:$--red-color;
+                border-color:$--red-color;
+            }
+        }
+        $--ra:$btn-border-radius-base;
+        .ant-input-search{
+            border-top-right-radius: $--ra;
+            border-bottom-right-radius:$--ra;
+            .ant-input{
+              border-top-right-radius: $--ra;
+              border-bottom-right-radius: $--ra;
+            }
+        }
+
+    }
+}

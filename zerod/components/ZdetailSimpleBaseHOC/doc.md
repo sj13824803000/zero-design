@@ -76,9 +76,21 @@ let defaultConfig = {
 	<tbody>
 		<tr>
 			<td>pageHeader</td>
-			<td>页头内容,除了show属性，其他属性同 组件/ZpageHeader的Props</td>
+			<td>页头内容,除了show属性(默认false)，其他属性同 组件/ZpageHeader的Props</td>
 			<td>object</td>
 			<td>--</td>
+		</tr>
+		<tr>
+			<td>pageFooter</td>
+			<td>页尾内容,除了show属性(默认true)，其他属性同 组件/pageFooter的Props</td>
+			<td>object</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>hasBodyPadding</td>
+			<td>中间部分是否有padding值</td>
+			<td>boolean</td>
+			<td>true</td>
 		</tr>
 		<tr>
 			<td>detail</td>
@@ -151,10 +163,66 @@ let defaultConfig = {
 
 pageConfig 中的一些函数如`moreContentRender`提供了`tool`参数出来，有如下内容：
 
-### tool.showRightModal
+`tool`对象不但包含`ZerodMainContext`提供的东西（请查看 上下文/ ZerodMainContext ），比如 tool.showRightModal，还提供如下内容：
 
-就是上下文`ZerodMainContext`提供的 showRightModal 函数(用于打开/关闭 rightModal)
+### tool.methods
 
-### tool.showLoading
+tool.methods 是一个对象，内容如下：
 
-用于显示/取消当前页的loading  :  tool.showLoading(true)
+<table>
+	<thead>
+		<tr>
+			<th>方法</th>
+			<th>说明</th>
+			<th>使用方式</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>showLoading</td>
+			<td>用于 显示/取消 当前页的loading的方法，必需参数show：true|false</td>
+			<td>tool.methods.showLoading(true)</td>
+		</tr>
+		<tr>
+			<td>getDetailData</td>
+			<td>会触发pageConfig.detail.detailApiInterface函数</td>
+			<td>tool.methods.getDetailData()</td>
+		</tr>
+		<tr>
+			<td>openModal</td>
+			<td>根据当前位置打开下一级rightModal</td>
+			<td>tool.methods.openModal(content)</td>
+		</tr>
+		<tr>
+			<td>closeCurrentModal</td>
+			<td>关闭当前的rightModal</td>
+			<td>tool.methods.closeCurrentModal()</td>
+		</tr>
+	</tbody>
+</table>
+
+### tool.$router
+
+tool.$router是一个对象，内容如下：
+
+<table>
+	<thead>
+		<tr>
+			<th>属性</th>
+			<th>说明</th>
+			<th>使用方式</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>history</td>
+			<td>可以调用push、replace等跳转路由path得方法，<a href="https://reacttraining.com/react-router/web/api/history" target="_blank"> 更多请查看react-router的history</a></td>
+			<td>tool.$router.history.push("/login")</td>
+		</tr>
+		<tr>
+			<td>location</td>
+			<td>当前路由的相关信息,<a href="https://reacttraining.com/react-router/web/api/location" target="_blank"> 更多请查看react-router的location</a></td>
+			<td>tool.$router.location.pathname</td>
+		</tr>
+	</tbody>
+</table>

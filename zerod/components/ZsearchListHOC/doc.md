@@ -4,7 +4,7 @@
 
 `ZsearchListHOC`内置了一个`ZlistPanel`组件，可以`import {ZlistPanel} from "zerod"`引入，`ZlistPanel`的 props 同 `pageConfig.list`
 
-1、基本使用
+1、table类型
 
 <div class="z-demo-box" data-render="demo1" data-title="此demo结合ZeditSimpleFormHOC、ZdetailSimpleBaseHOC的完整示例"></div>
 
@@ -68,17 +68,38 @@ const pageConfig = {
 		// 表格操作列的字段key
 		actionDataIndex: "serviceName",
 		// antd  Table的参数
-		tableParams: {},
+		tableParams: {
+			//通过展开查看更多内容
+			expandedRowRender: (record, index, indent, expanded) => {
+				return (
+					<div>
+						<dl className="z-info">
+							<dt className="z-info-left z-padding-bottom-10">服务名称</dt>
+							<dd className="z-info-right z-padding-bottom-10">{record.serviceName}</dd>
+						</dl>
+						<dl className="z-info">
+							<dt className="z-info-left z-padding-bottom-10">服务编码</dt>
+							<dd className="z-info-right z-padding-bottom-10">{record.serviceCode}</dd>
+						</dl>
+						<dl className="z-info">
+							<dt className="z-info-left z-padding-bottom-10">服务描述</dt>
+							<dd className="z-info-right z-padding-bottom-10">{record.remark}</dd>
+						</dl>
+					</div>
+				);
+			},
+		},
 		// 表格列map数据数据，同antd的表格 columns
 		tableColumns: [
 			{
 				title: "服务名称",
 				dataIndex: "serviceName",
+				sorter:true, //启用排序字段
 			},
 			{
 				title: "服务编码",
 				dataIndex: "serviceCode",
-				// sorter:true,
+				sorter:true, //启用排序字段
 			},
 			{
 				title: "约定端口号",
@@ -166,40 +187,55 @@ const pageConfig = {
 export default ZsearchListHOC(pageConfig);
 ```
 
-2、按字段排序 + 通过展开查看更多内容 + 无限追加的分页类型
+2、card类型 + 按字段排序 + 无限追加的分页类型
 
 <div class="z-demo-box" data-render="demo2" data-title="关键代码如下"></div>
 
 ```jsx
 const pageConfig = {
 	list: {
+		listType:"card",
 		// 分页类型
 		paginationType: "infinite",
-		getPageSize: (listType, isListCard) => {
-			// 如果card类型每页4条，否则每页3条
-			return isListCard ? 4 : 3;
-		},
-		tableParams: {
-			//通过展开查看更多内容
-			expandedRowRender: (record, index, indent, expanded) => {
-				return (
-					<div>
-						<dl className="z-info">
-							<dt className="z-info-left z-padding-bottom-10">服务名称</dt>
-							<dd className="z-info-right z-padding-bottom-10">{record.serviceName}</dd>
-						</dl>
-						<dl className="z-info">
-							<dt className="z-info-left z-padding-bottom-10">服务编码</dt>
-							<dd className="z-info-right z-padding-bottom-10">{record.serviceCode}</dd>
-						</dl>
-						<dl className="z-info">
-							<dt className="z-info-left z-padding-bottom-10">服务描述</dt>
-							<dd className="z-info-right z-padding-bottom-10">{record.remark}</dd>
-						</dl>
-					</div>
-				);
+		getPageSize: (listType) =>2,
+		tableColumns: [
+			{
+				title: "服务名称",
+				dataIndex: "serviceName",
+				sorter: true, //启用排序
 			},
-		},
+			{
+				title: "服务编码",
+				dataIndex: "serviceCode",
+				sorter: true, //启用排序
+			},
+			{
+				title: "约定端口号",
+				dataIndex: "servicePort",
+				render: (text, record, index, instance) => {
+					return <span className="z-text-red">{text}</span>;
+				},
+			},
+			{
+				title: "服务描述",
+				dataIndex: "remark",
+			},
+		],
+	},
+};
+```
+
+2、simple类型
+
+<div class="z-demo-box" data-render="demo3" data-title="关键代码如下"></div>
+
+```jsx
+const pageConfig = {
+	list: {
+		listType:"simple",
+		// 分页类型
+		paginationType: "infinite",
+		getPageSize: (listType) => 3,
 		tableColumns: [
 			{
 				title: "服务名称",
@@ -241,9 +277,21 @@ const pageConfig = {
 	<tbody>
 		<tr>
 			<td>pageHeader</td>
-			<td>页头内容,除了show属性，其他属性同 组件/ZpageHeader的Props</td>
+			<td>页头内容,除了show属性(默认false)，其他属性同 组件/ZpageHeader的Props</td>
 			<td>object</td>
 			<td>--</td>
+		</tr>
+		<tr>
+			<td>pageFooter</td>
+			<td>页尾内容,除了show属性(默认true)，其他属性同 组件/pageFooter的Props</td>
+			<td>object</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>hasBodyPadding</td>
+			<td>中间部分是否有padding值</td>
+			<td>boolean</td>
+			<td>true</td>
 		</tr>
 		<tr>
 			<td>searchForm</td>
@@ -350,13 +398,13 @@ const pageConfig = {
 		<tr>
 			<td>listApiInterface</td>
 			<td>获取列表数据的后台接口函数,其必须返回Promise,参数有query:查询表单相关值、分页数据、排序字段,sorter:更多排序数据。接口响应体的data属性支持 array和object类型</td>
-			<td>(query,sorter) => Promise对象</td>
+			<td>(query,sorter,tool) => Promise对象</td>
 			<td>--</td>
 		</tr>
 		<tr>
 			<td>deleteApiInterface</td>
 			<td>删除按钮后台接口函数,其必须返回Promise,参数有data:每一行数据</td>
-			<td>(data) => Promise对象</td>
+			<td>(data,tool) => Promise对象</td>
 			<td>--</td>
 		</tr>
 		<tr>
@@ -480,9 +528,7 @@ const pageConfig = {
 
 pageConfig.list 中的一些函数如`moreContentRender`提供了`tool`参数出来，有如下内容：
 
-### tool.showRightModal
-
-就是上下文`ZerodMainContext`提供的 showRightModal 函数(用于打开/关闭 rightModal)
+`tool`对象不但包含`ZerodMainContext`提供的东西（请查看 上下文/ ZerodMainContext ），比如 tool.showRightModal，还提供如下内容：
 
 ### tool.getPage
 
@@ -524,6 +570,11 @@ tool.methods 是一个对象，内容如下：
 			<td>openModal</td>
 			<td>打开当前列表所在位置关联的rightModal，与tool.showRightModal有区别；必需参数content:窗口的内容</td>
 			<td>tool.methods.openModal(<\div\>内容<\/div\>)</td>
+		</tr>
+		<tr>
+			<td>closeCurrentModal</td>
+			<td>关闭当前的rightModal</td>
+			<td>tool.methods.closeCurrentModal()</td>
 		</tr>
 		<tr>
 			<td>currentListData</td>
