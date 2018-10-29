@@ -25,7 +25,7 @@ export function ZeditorTreeHOC(pageConfig) {
         config = defaultConfig;
 
         render() {
-            let {className} = this.config.className;
+            let {className} = this.config;
             className = className ? className : {};
             return (
                 <PageWraper className={className} pageHeader={this.config.pageHeader} pageFooter={this.config.pageFooter} hasBodyPadding={this.config.hasBodyPadding}>
