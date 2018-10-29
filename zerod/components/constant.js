@@ -13,6 +13,8 @@ export const const_getMainTool = function() {
 		"$router",
 		"getTemporaryStorage",
 		"setTemporaryStorage",
+		"getScrollAreaWrapperEl",
+		"getInsertLocation"
 	].forEach((key) => {
 		tool[key] = this.props[key];
 	});
@@ -27,14 +29,15 @@ export const const_insertLocations = {
 	appModal_top: "appModal_top",
 };
 //获取当前HOC的放置位置
-export const const_getInsertLocation = function() {
-	if (this.hocWrapperEl) {
-		let _parent = this.hocWrapperEl.parentElement;
+export const const_getInsertLocation = function(el) {
+	if (el) {
+		let _parent =el.parentElement;
 		while (_parent && !_parent.dataset.zgt_modal) {
 			_parent = _parent.parentElement;
 		}
-		this.insertLocation = _parent && _parent.dataset.zgt_modal ? _parent.dataset.zgt_modal : "mainRoute";
+		return _parent && _parent.dataset.zgt_modal ? _parent.dataset.zgt_modal : "mainRoute";
 	}
+	return null;
 };
 //
 export const const_showLoading = (insertLocation, props) => {
@@ -156,12 +159,19 @@ export const const_execAsync = function(callback) {
 };
 //ZtreePanel和ZlistPanel的heading,这里不能是箭头函数
 export const const_getPanleHeader = function() {
-	const { showAddBtn } = this.props;
+	const { showAddBtn, addBtnDisabled } = this.props;
 	const _showAddBtn = typeof showAddBtn == "function" ? showAddBtn() : showAddBtn;
+	const _addBtnDisabled = typeof addBtnDisabled == "function" ? addBtnDisabled() : addBtnDisabled;
 	this.addBtn =
 		_showAddBtn && !this.state.isListCard ? (
 			// <div className="z-margin-bottom-15">
-			<Button type="primary" icon="plus" className="z-margin-left-10" onClick={this.methods.onAdd}>
+			<Button
+				disabled={_addBtnDisabled}
+				type="primary"
+				icon="plus"
+				className="z-margin-left-10"
+				onClick={this.methods.onAdd}
+			>
 				新增
 			</Button>
 		) : // </div>

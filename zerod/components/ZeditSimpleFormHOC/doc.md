@@ -1,3 +1,5 @@
+<div class="z-doc-titles"></div>
+
 # 编辑页面：ZeditSimpleFormHOC
 
 `ZeditSimpleFormHOC`是一个函数，传入`pageConfig`参数配置，返回一个表单编辑结构的组件
@@ -142,6 +144,24 @@ const pageCofig = {
 			return api.config.addService(Object.assign({}, values, { environment: "default" }));
 		},
 	},
+		moreContentRender: function() {
+			return (
+				<div className="z-panel z-margin-top-20">
+					<div className="z-panel-body">moreContentRender</div>
+				</div>
+			);
+		},
+		panelBeforeRender: function() {
+			return (
+				<div className="z-panel z-margin-bottom-20">
+					<div className="z-panel-body">panelBeforeRender</div>
+				</div>
+			);
+		},
+		panelAfterRender: function() {
+			// MoreContent 的代码请查看 ZerodMainContext 的 getScrollAreaWrapperEl 中例子的代码
+			return <MoreContent />;
+		},
 };
 export default ZeditSimpleFormHOC(pageConfig);
 ```
@@ -244,16 +264,29 @@ const pageCofig = {
 			return api.config.updateService(Object.assign({}, values, { serviceId: props.detailId }));
 		},
 	},
-	moreContentRender: function(detail, panel) {
-		return (
-			<div className="z-panel z-margin-top-20">
-				<div className="z-panel-body">更多内容</div>
-			</div>
-		);
-	},
+		moreContentRender: function() {
+			return (
+				<div className="z-panel z-margin-top-20">
+					<div className="z-panel-body">moreContentRender</div>
+				</div>
+			);
+		},
+		panelBeforeRender: function() {
+			return (
+				<div className="z-panel z-margin-bottom-20">
+					<div className="z-panel-body">panelBeforeRender</div>
+				</div>
+			);
+		},
+		panelAfterRender: function() {
+			// MoreContent 的代码请查看 ZerodMainContext 的 getScrollAreaWrapperEl 中例子的代码
+			return <MoreContent />;
+		},
 };
 export default ZeditSimpleFormHOC(pageConfig);
 ```
+
+<div class="z-doc-titles"></div>
 
 ## pageConfig
 
@@ -311,6 +344,8 @@ export default ZeditSimpleFormHOC(pageConfig);
 		</tr>
 	</tbody>
 </table>
+
+<div class="z-doc-titles"></div>
 
 ## pageConfig.form
 
@@ -393,6 +428,8 @@ export default ZeditSimpleFormHOC(pageConfig);
 	</tbody>
 </table>
 
+<div class="z-doc-titles"></div>
+
 ## tool 参数
 
 pageConfig 中的一些函数如`moreContentRender`提供了`tool`参数出来，有如下内容：
@@ -443,6 +480,8 @@ tool.methods 是一个对象，内容如下：
 		</tr>
 	</tbody>
 </table>
+
+<div class="z-doc-titles"></div>
 
 ### tool.$router
 

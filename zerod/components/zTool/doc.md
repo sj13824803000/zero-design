@@ -1,6 +1,9 @@
+
 # 工具库 zTool
 
 `zTool`积累了一些通用的工具函数，包括对需要对 DOM 元素操作的一些函数
+
+<div class="z-doc-titles"></div>
 
 ## zTool.httpAjax
 
@@ -27,6 +30,7 @@ zTool
 	.finally(() => {});
 zTool.httpAjax("post", "/webapi/v1.0/config/center/updateConfigProperty", { id: "41", name: "我们的故事" });
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.isUrl
 
@@ -40,6 +44,7 @@ import { zTool } from "zerod";
  */
 zTool.isUrl("https://github.com/axios/axios"); // true
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.parseQueryString
 
@@ -54,6 +59,7 @@ import { zTool } from "zerod";
 zTool.parseQueryString("http://my.com/select?id=100&selected=1"); //{id:100,selected:1}
 zTool.parseQueryString("?id=100&selected=1"); //{id:100,selected:1}
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.filterQuery
 
@@ -68,6 +74,7 @@ import { zTool } from "zerod";
  */
 zTool.filterQuery(["name", "selected"], { name: "萧雨", selected: false, id: "85", woch: "犹豫" }); //得到新对象： {name:"萧雨",selected:false}
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.BuildScroll
 
@@ -104,6 +111,7 @@ class My extends React.Component {
 	}
 }
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.listenDivSizeChange
 
@@ -120,6 +128,7 @@ zTool.listenDivSizeChange(document.querySelector("#id"), ()=>{
     //盒子高度/宽度变化了
 }));
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.scrollDisableWheel
 
@@ -133,6 +142,7 @@ import { zTool } from "zerod";
  */
 zTool.scrollDisableWheel(document.querySelector("#textarea"));
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.GenNonDuplicateID
 
@@ -146,6 +156,7 @@ import { zTool } from "zerod";
  */
 zTool.GenNonDuplicateID(8);
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.EetoString
 
@@ -160,10 +171,13 @@ import { zTool } from "zerod";
 zTool.EetoString(6.5e8); //"650000000"
 zTool.EetoString(6.5e-7); //"0.65000000"
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.loadFileList
 
-动态加载 js、css 的函数，支持多个文件同时加载，支持多个文件按顺序加载
+动态加载 .js、.css 的函数，支持多个文件同时加载，支持多个文件按顺序加载
+
+如果是"http" | "https" 开头,但没有.js|.css后缀的路径只支持加载js
 
 ```js
 import { zTool } from "zerod";
@@ -183,6 +197,7 @@ zTool
 		//所有文件加载完的回调
 	});
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.dataTypeTest
 
@@ -204,6 +219,7 @@ zTool.dataTypeTest(new Symbol()); // symbol
 zTool.dataTypeTest(new Set()); // set
 zTool.dataTypeTest(new Map()); // map
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.deepCopy
 
@@ -215,6 +231,7 @@ import { zTool } from "zerod";
 const newArray = zTool.deepCopy([{ name: "1", children: [{ name: "1-1" }] }]);
 const newObj = zTool.deepCopy({ name: "1", children: [{ name: "1-1" }] });
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.arrayFilterBy
 
@@ -241,6 +258,8 @@ var arr = [1, 2, 3, 2, 4, 3, 5, 3];
 arrayFilterBy(arr, [3, 2]); //得到 [3,3,3,2,2]
 ```
 
+<div class="z-doc-titles"></div>
+
 ## zTool.on
 
 事件绑定，同 `element.addEventListener(event,handle,false)`;
@@ -259,13 +278,19 @@ zTool.on(document.querySelector("#id"), "click", (e) => {
 });
 ```
 
+<div class="z-doc-titles"></div>
+
 ## zTool.off
 
 移除事件，同 `element.removeEventListener(event,handle,false)`，参数同`zTool.on`
 
+<div class="z-doc-titles"></div>
+
 ## zTool.once
 
 绑定一次性事件，参数同`zTool.on`
+
+<div class="z-doc-titles"></div>
 
 ## zTool.hasClass
 
@@ -283,6 +308,8 @@ const hasFLoat = zTool.hasClass(document.querySelector("#id"), "z-float");
 console.log(hasFLoat);
 ```
 
+<div class="z-doc-titles"></div>
+
 ## zTool.addClass
 
 给某个 DOM 元素添加样式类名
@@ -298,6 +325,8 @@ import { zTool } from "zerod";
 zTool.addClass(document.querySelector("#id"), "z-float z-font-size-20");
 ```
 
+<div class="z-doc-titles"></div>
+
 ## zTool.removeClass
 
 给某个 DOM 元素移除样式类名
@@ -312,6 +341,7 @@ import { zTool } from "zerod";
 //例：
 zTool.removeClass(document.querySelector("#id"), "z-font-size-20");
 ```
+<div class="z-doc-titles"></div>
 
 ## zTool.getStyle
 
@@ -327,6 +357,8 @@ import { zTool } from "zerod";
 //例：
 const height = zTool.getStyle(document.querySelector("#id"), "height"); // 100px
 ```
+
+<div class="z-doc-titles"></div>
 
 ## zTool.setStyle
 
