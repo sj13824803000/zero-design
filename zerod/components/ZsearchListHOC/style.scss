@@ -1,5 +1,9 @@
 @import "../../scssMixin/generateClassName";
 @import "../../scss/vars";
+@include z("embedded-form"){
+	padding:10px 20px 0;
+	transition: all 0.4s cubic-bezier(0,0,0.3,1) !important;
+}
 $--card-gutter: 8px;
 @include z("card-row") {
 	margin-left: -$--card-gutter;
@@ -21,7 +25,7 @@ $--simple-gutter: 20px;
 
 $--card-title-color: $heading-color;
 @include z("list-table") {
-	margin: 0 -24px 20px;
+	margin: 0 -1px  0  0;
 	:global {
 		.ant-table-thead > tr > th {
 			border-bottom: 0;
@@ -65,7 +69,7 @@ $--card-title-color: $heading-color;
 	margin-top: 0;
     margin-bottom:12px;
     &:hover{
-        color:$primary-7;
+        color:$--primary-7;
         cursor: pointer;
     }
     white-space: nowrap;
@@ -126,4 +130,29 @@ $--icon-w: 60px;
         }
 
     }
+}
+@include z('control-icon'){
+	display: inline-block;
+	padding:4px;
+	vertical-align: middle;
+	color: #0A1131;
+	margin-left: 10px;
+	border-radius: 3px;
+	cursor: pointer;
+	&:hover{
+		background-color: #E8E8ED;
+
+	}
+}
+
+@include z('control-group'){
+	:global{
+		.ant-checkbox-group-item{
+			display: block;
+			
+		}
+		.ant-checkbox-group-item:not(:first-child){
+			margin-top:5px;
+		}
+	}
 }

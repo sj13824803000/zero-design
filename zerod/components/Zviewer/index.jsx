@@ -10,10 +10,12 @@ export class Zviewer extends React.Component {
 	static propTypes = {
 		urls: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.arrayOf(PropTypes.object)]),
 		className: PropTypes.string,
+		showThumbAlt: PropTypes.bool,
 	};
 	static defaultProps = {
 		urls: [],
 		className: "",
+		showThumbAlt: true,
 	};
 	initViewer = () => {
 		if (this.viewer) {
@@ -25,7 +27,7 @@ export class Zviewer extends React.Component {
 					return img.dataset.url;
 				},
 				ready() {
-					const _container = this.viewer.body ? this.viewer.body.querySelector(".viewer-container") : null;
+					const _container = this.viewer.viewer ? this.viewer.viewer: null;
 					if (!_container || _container.querySelector(`.${cssClass["z-next"]}`) !== null) {
 						return;
 					}
@@ -64,9 +66,10 @@ export class Zviewer extends React.Component {
 		}
 	}
 	componentWillUnmount() {
-		this.viewer&&this.viewer.destroy();
+		this.viewer && this.viewer.destroy();
 	}
 	render() {
+		const { showThumbAlt } = this.props;
 		return (
 			<ul
 				ref={(el) => {
@@ -82,7 +85,18 @@ export class Zviewer extends React.Component {
 						return (
 							<CSSTransition key={i} timeout={animateTimout.flipInTime} classNames="flipY">
 								<li key={i}>
-									<ZbgImage url={thumb} style={{ height: "100%" }} />
+									{showThumbAlt ? (
+										<div className={cssClass['z-viewer-thumb']}>
+											<ZbgImage url={thumb} style={{ height: "100%" }} />
+										</div>
+									) : (
+										<ZbgImage url={thumb} style={{ height: "100%" }} />
+									)}
+									{showThumbAlt ? (
+										<div className={cssClass['z-viewer-alt']}>
+											{alt}
+										</div>
+									) : null}
 									<img data-url={url} alt={alt} />
 								</li>
 							</CSSTransition>

@@ -9,8 +9,11 @@ $--blue-deep:#2F6BAA;
 
 $--yellow-color:#FF9A00;
 $--green-color:#21BE2E;
+$--green-tint:#35E386;
+$--green-deep:#10B56D;
 
 $--red-color:#D12020;
+$--red-deep:#D12020;
 $--red-tint:#FD7A7A;
 
 //--卡片圆角
@@ -20,7 +23,7 @@ $--card-radius:8px;
 $--box-shadow:0 2px 4px 0 rgba(217,217,217,0.50);
 
 //--滚动条默认颜色
-$--defatul-ScrollbarColor: rgba($--default-color, 0.2);
+$--defatul-ScrollbarColor: rgba(57,61,73, 0.2);
 
 //--ZmainHOC-light
 $--main-logo-light-bg: white;
@@ -36,9 +39,14 @@ $--main-nav-mazarine-bg: #242c47;
 //--------------------------------antd 的变量-------------------------
 
 //--基础
-//$blue-6:$--blue-color;
+//$blue-6:$--blue-deep;
 //$heading-color:#000000;
 //$text-color:#333333;
+//$border-color-base:hsl(0,0,85%);
+//$border-radius-base:4px;
+//
+//// // -------- Colors -----------
+//$primary-color          : $blue-6;
 //
 ////--按钮
 //$btn-border-radius-base:30px;

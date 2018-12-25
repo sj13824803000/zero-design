@@ -1,15 +1,9 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import {
-	const_showLoading,
-	const_insertLocations,
-	const_getInsertLocation,
-	const_getModalType,
-	const_getMainTool,
-} from "../constant";
+import { const_getInsertLocation, const_getMainTool, const_getMethods ,const_getPageWrapperProps,const_extendArguments} from "../constant";
 import PropTypes from "prop-types";
 import { Zform } from "../Zform";
-import { Input, message } from "antd";
+// import { Input } from "antd";
 // import cssClass from "./style.scss";
 // 工具
 import { mergeConfig } from "../zTool";
@@ -31,7 +25,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			//any
 			content: "描述",
 			//element | node
-			rightMoreContent: <div>右边</div>,
+			rightMoreContent: null,
 		},
 		form: {
 			type: "add", //'add' | 'update'
@@ -41,35 +35,35 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			submitMsg: undefined,
 			submitBtnName: undefined,
 			items: [
-				{
-					key: "serviceCode",
-					label: "名称",
-					render: (form) => {
-						return <Input placeholder="请输入内容" />;
-					},
-					//antd的 form.getFieldDecorator的options
-					options: {
-						//验证规则
-						rules: [
-							{
-								required: true,
-								message: "不能为空。",
-							},
-						],
-					},
-				},
-				{
-					key: "serviceName",
-					label: "描述",
-					render: (form) => {
-						return <Input placeholder="请输入内容" />;
-					},
-				},
+				// {
+				// 	key: "serviceCode",
+				// 	label: "名称",
+				// 	render: (form) => {
+				// 		return <Input placeholder="请输入内容" />;
+				// 	},
+				// 	//antd的 form.getFieldDecorator的options
+				// 	options: {
+				// 		//验证规则
+				// 		rules: [
+				// 			{
+				// 				required: true,
+				// 				message: "不能为空。",
+				// 			},
+				// 		],
+				// 	},
+				// },
+				// {
+				// 	key: "serviceName",
+				// 	label: "描述",
+				// 	render: (form) => {
+				// 		return <Input placeholder="请输入内容" />;
+				// 	},
+				// },
 			],
 			// 获取详细数据的后台接口函数
-			detailApiInterface: (detailId, props, tool) => Promise.reject({ mag: "未提供后台接口" }),
+			detailApiInterface: (detailId, props, tool) => Promise.resolve({ data: {} }),
 			// 保存数据的后台接口函数
-			submitApiInterface: (values, props, tool) => Promise.reject({ mag: "未提供后台接口" }),
+			submitApiInterface: (values, props, tool) => Promise.resolve({ data: {} }),
 			showSubmitBtn: true,
 			// submitApiInterface接口成功之后的回调
 			afterSubmitSuccess: (values, tool) => {},
@@ -86,6 +80,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 		panelAfterRender: (detail, tool) => {
 			return null;
 		},
+		exportSomething:null,
 	};
 	defaultConfig = mergeConfig(defaultConfig, pageConfig);
 	class myForm extends React.Component {
@@ -97,9 +92,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			detailData: {},
 		};
 		methods = {
-			showLoading: (show) => {
-				const_showLoading(this.insertLocation, this.props)(show);
-			},
+			...const_getMethods.call(this),
 			getFormDetailData: () => {
 				if (this.props.detailId === undefined || this.props.detailId === null) {
 					throw Error("缺少获取详细数据的detailId");
@@ -123,20 +116,11 @@ export function ZeditSimpleFormHOC(pageConfig) {
 						);
 					})
 					.catch((re) => {
-						message.error(re && re.msg ? re.msg : "获取数据失败");
+						this.methods.notice.error(re && re.msg ? re.msg : "获取数据失败");
 					})
 					.finally(() => {
 						this.methods.showLoading(false);
 					});
-			},
-			openModal: (content) => {
-				content &&
-					this.props.showRightModal &&
-					this.props.showRightModal(true, const_getModalType(this.insertLocation), content);
-			},
-			closeCurrentModal: () => {
-				if (this.insertLocation !== const_insertLocations.mainRoute)
-					this.props.showRightModal && this.props.showRightModal(false, this.insertLocation);
 			},
 			closeRightModal: () => {
 				this.methods.closeCurrentModal();
@@ -148,11 +132,11 @@ export function ZeditSimpleFormHOC(pageConfig) {
 					.submitApiInterface(values, this.props, this.tool)
 
 					.then((re) => {
-						message.success("保存成功");
+						this.methods.notice.success("保存成功");
 						typeof afterSuccess === "function" && afterSuccess(values, this.tool);
 					})
 					.catch((re) => {
-						message.error(re && re.msg ? re.msg : "保存失败");
+						this.methods.notice.error(re && re.msg ? re.msg : "保存失败");
 					})
 					.finally(() => {
 						this.props.showModalLoading(false);
@@ -162,7 +146,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 		getPanleHeader() {
 			const heading = this.config.form.panelHeader;
 			return heading ? (
-				<div className="z-panel-heading">{typeof heading == "function" ? heading(this) : heading}</div>
+				<div className="z-panel-heading">{typeof heading == "function" ? heading(this.tool) : heading}</div>
 			) : null;
 		}
 		getFormInstance = (form) => {
@@ -188,8 +172,23 @@ export function ZeditSimpleFormHOC(pageConfig) {
 			}
 		};
 		componentDidMount() {
-			this.insertLocation=const_getInsertLocation(this.hocWrapperEl);
+			typeof this.config.exportSomething=='function'&&this.config.exportSomething(this.tool);
+			this.insertLocation = const_getInsertLocation(this.hocWrapperEl);
 		}
+		pageWraper = const_getPageWrapperProps(this.config);
+		getDefaultFormItems = () => {
+			const formItems=this.config.form.items? this.config.form.items
+			: []
+			return formItems.map(item=>{
+				return {
+					...item,
+					render:(form,changeFormItems)=>{
+						return typeof item.render=='function'&&item.render(form,changeFormItems,this.tool)
+					}
+				}
+			});
+		};
+		formItems=this.getDefaultFormItems();
 		render() {
 			const {
 				type,
@@ -201,6 +200,8 @@ export function ZeditSimpleFormHOC(pageConfig) {
 				getFormInstance,
 				onSubmit,
 				submitBtnName,
+				items,
+				submitBtnRender,
 				...formOthers
 			} = this.config.form;
 			return (
@@ -210,9 +211,7 @@ export function ZeditSimpleFormHOC(pageConfig) {
 					}}
 				>
 					<PageWraper
-						pageHeader={this.config.pageHeader}
-						pageFooter={this.config.pageFooter}
-						hasBodyPadding={this.config.hasBodyPadding}
+						{...this.pageWraper}
 					>
 						{typeof this.config.panelBeforeRender === "function" &&
 							this.config.panelBeforeRender(this.state.detailData, this.tool)}
@@ -221,6 +220,8 @@ export function ZeditSimpleFormHOC(pageConfig) {
 							<div className="z-panel-body">
 								<Zform
 									{...formOthers}
+									submitBtnRender={const_extendArguments(submitBtnRender,this.tool)}
+									items={this.formItems}
 									onSubmit={this.methods.onSubmit}
 									getFormInstance={this.getFormInstance}
 									submitBtnName={this.config.form.showSubmitBtn ? this.config.form.submitBtnName : ""}

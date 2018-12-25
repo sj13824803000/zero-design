@@ -6,7 +6,7 @@
 
 `ZsearchListHOC`内置了一个`ZlistPanel`组件，可以`import {ZlistPanel} from "zerod"`引入，`ZlistPanel`的 props 同 `pageConfig.list`
 
-1、table类型
+1、table 类型
 
 <div class="z-demo-box" data-render="demo1" data-title="此demo结合ZeditSimpleFormHOC、ZdetailSimpleBaseHOC的完整示例"></div>
 
@@ -96,12 +96,12 @@ const pageConfig = {
 			{
 				title: "服务名称",
 				dataIndex: "serviceName",
-				sorter:true, //启用排序字段
+				sorter: true, //启用排序字段
 			},
 			{
 				title: "服务编码",
 				dataIndex: "serviceCode",
-				sorter:true, //启用排序字段
+				sorter: true, //启用排序字段
 			},
 			{
 				title: "约定端口号",
@@ -117,8 +117,6 @@ const pageConfig = {
 		],
 		// 是否显示新建按钮
 		showAddBtn: true,
-		// 新建按钮权限控制代码
-		addBtnPermCode: "",
 		addPageRender: (panel) => {
 			const AddPage = getEditPage({
 				pageType: "add",
@@ -136,8 +134,6 @@ const pageConfig = {
 		},
 		// 是否显示详情按钮
 		showDetailBtn: true,
-		// 详情按钮权限控制代码
-		detailBtnPermCode: "",
 		detailPageRender: (record) => {
 			const DetailPage = getDetailPage({ headerTitle: record.serviceName, headerContent: record.remark });
 			return <DetailPage detailId={record.id} />;
@@ -189,17 +185,17 @@ const pageConfig = {
 export default ZsearchListHOC(pageConfig);
 ```
 
-2、card类型 + 按字段排序 + 无限追加的分页类型
+2、card 类型 + 按字段排序 + 无限追加的分页类型
 
 <div class="z-demo-box" data-render="demo2" data-title="关键代码如下"></div>
 
 ```jsx
 const pageConfig = {
 	list: {
-		listType:"card",
+		listType: "card",
 		// 分页类型
 		paginationType: "infinite",
-		getPageSize: (listType) =>2,
+		getPageSize: (listType) => 2,
 		tableColumns: [
 			{
 				title: "服务名称",
@@ -227,14 +223,14 @@ const pageConfig = {
 };
 ```
 
-2、simple类型
+2、simple 类型
 
 <div class="z-demo-box" data-render="demo3" data-title="关键代码如下"></div>
 
 ```jsx
 const pageConfig = {
 	list: {
-		listType:"simple",
+		listType: "simple",
 		// 分页类型
 		paginationType: "infinite",
 		getPageSize: (listType) => 3,
@@ -269,6 +265,8 @@ const pageConfig = {
 
 ## pageConfig
 
+除了如下的属性，pageConfig 还包含 <span class="z-history-href" data-path="/main/HOC-doc/ZpageWraperHOC-doc">HOC/页面头尾结构：ZpageWrapper</span> 的 props
+
 <table>
 	<thead>
 		<tr>
@@ -279,27 +277,16 @@ const pageConfig = {
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td>pageHeader</td>
-			<td>页头内容,除了show属性(默认false)，其他属性同 组件/ZpageHeader的Props</td>
-			<td>object</td>
-			<td>--</td>
-		</tr>
-		<tr>
-			<td>pageFooter</td>
-			<td>页尾内容,除了show属性(默认true)，其他属性同 组件/pageFooter的Props</td>
-			<td>object</td>
-			<td>--</td>
-		</tr>
-		<tr>
-			<td>hasBodyPadding</td>
-			<td>中间部分是否有padding值</td>
-			<td>boolean</td>
-			<td>true</td>
-		</tr>
-		<tr>
+		 <tr>
 			<td>searchForm</td>
-			<td>查询表单，请看下面的pageConfig.searchForm</td>
+			<td>
+				<p>1、<code>searchForm.defaultExpanded</code> 是否默认展开表单,(默认false)</p>
+				<p>2、<code>searchForm.insertTo</code> 此属性可以是:一个已存在的dom元素 || 一个已存在的dom元素的Id || true || false || (tool)=>{return 一个已存在的dom元素 || 一个已存在的dom元素的Id || true || false}，其用途为：将searchForm插到某个dom元素内,如为true则插到页头显示,(默认false)</p>
+				<p>3、<code>searchForm的其他属性</code>还包含： 请查看 <span class="z-history-href" data-path="/main/component-doc/ZsearchForm-doc">组件/ZsearchForm</span> 的 props  (除了onSearch, onReset, noCollapse ,hidden ,其他都有效)。</p>
+				<p>4、其中<code>searchForm.items</code>的<code>render函数</code>的参数在这里多加tool,如：items:[{render:(form,changeFormItems,tool)=>{},key:"myKey"}]。</p>
+				<p>5、其中<code>searchForm.items</code>的<code>options函数</code>的参数在这里多加tool,如：items:[{options:(tool)=>options}]。</p>
+				<p>6、<code>searchForm</code>的其他<code>函数属性</code>除了原有的参数，还多加tool，如 <code>searchForm.afterItemsRendered</code>:(form,methods,tool)=>{}</p>
+			</td>
 			<td>object</td>
 			<td>--</td>
 		</tr>
@@ -307,29 +294,6 @@ const pageConfig = {
 			<td>list</td>
 			<td>列表展示，请看下面的pageConfig.list</td>
 			<td>object</td>
-			<td>--</td>
-		</tr>
-	</tbody>
-</table>
-
-<div class="z-doc-titles"></div>
-
-## pageConfig.searchForm
-
-<table>
-	<thead>
-		<tr>
-			<th>参数</th>
-			<th>说明</th>
-			<th>类型</th>
-			<th>默认值</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>items</td>
-			<td>表单的渲染项，如果为null则不显示查询表单，map结构：{key:表单控件value对应的字段名,lable:表单控件名称,render:渲染表单控件的函数(form,panel)=>{return;},options:<a href="https://ant.design/components/form-cn/" target="_blank">Antd的表单中getFieldDecorator函数的options参数</a>}</td>
-			<td>array[object] | null</td>
 			<td>--</td>
 		</tr>
 	</tbody>
@@ -356,7 +320,7 @@ const pageConfig = {
 			<td>table</td>
 		</tr>
 		<tr>
-			<td>cardCoverRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> cardCoverRender</td>
 			<td>listType="card" | "simple"，卡片的上部渲染函数或者是自定义图标、图片等</td>
 			<td>function(record){return ;}</td>
 			<td>--</td>
@@ -368,9 +332,9 @@ const pageConfig = {
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>panelHeader</td>
-			<td>列表面板的头部内容,为null则不显示面板头部</td>
-			<td>string | function(){return ;}</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> panelHeader</td>
+			<td>列表面板的头部内容,为null则不显示面板头部。也可以是一个对象：{left:(tool)=>span,center:(tool)=>span,right:(tool)=>span,}</td>
+			<td>string | (tool)=>span | object</td>
 			<td>列表</td>
 		</tr>
 		<tr>
@@ -381,7 +345,7 @@ const pageConfig = {
 		</tr>
 		<tr>
 			<td>tableColumns</td>
-			<td>表格列数据,<a href="https://ant.design/components/table-cn/" target="_blank">同Antd的表格 columns</a>，其中render函数参数为：(text,record,index,tool)=>自定义内容。尽管属性名与"table"相关,当listType="card"时也是有效的,也是必需的</td>
+			<td>表格列数据,<a href="https://ant.design/components/table-cn/" target="_blank">同Antd的表格 columns</a>，其中render函数参数为：(text,record,index,tool)=>自定义内容。尽管属性名与"table"相关,当listType="card"时也是有效的,也是必需的。在此，还额外增加show属性，为是否默认显示此列(字段)。</td>
 			<td>array[object]</td>
 			<td>--</td>
 		</tr>
@@ -398,7 +362,7 @@ const pageConfig = {
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>actionRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> actionRender</td>
 			<td>操作区的render,可以自定义操作按钮</td>
 			<td>(text, record,index,tool,isListCard)=>{return [按钮1,按钮2]}</td>
 			<td>--</td>
@@ -431,19 +395,13 @@ const pageConfig = {
 			<td>getPageSize</td>
 			<td>设置pageSize的钩子 (listType, isListCard)=>isListCard ? 8 : 10</td>
 			<td>function</td>
-			<td>(listType, isListCard)=>isListCard ? 8 : 10</td>
+			<td>(listType, isListCard,tool)=>isListCard ? 8 : 10</td>
 		</tr>
 		<tr>
-			<td>showAddBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showAddBtn</td>
 			<td>是否显示新增按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(tool){return false}</td>
 			<td>true</td>
-		</tr>
-		<tr>
-			<td>addBtnPermCode</td>
-			<td>新增按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
 		</tr>
 		<tr>
 			<td>addPageRender</td>
@@ -452,16 +410,10 @@ const pageConfig = {
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showDetailBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showDetailBtn</td>
 			<td>是否显示详情按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index,tool){return false}</td>
 			<td>true</td>
-		</tr>
-		<tr>
-			<td>detailBtnPermCode</td>
-			<td>详情按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
 		</tr>
 		<tr>
 			<td>detailPageRender</td>
@@ -470,16 +422,10 @@ const pageConfig = {
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showUpdateBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showUpdateBtn</td>
 			<td>是否显示修改按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index,tool){return false}</td>
 			<td>true</td>
-		</tr>
-		<tr>
-			<td>updateBtnPermCode</td>
-			<td>修改按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
 		</tr>
 		<tr>
 			<td>updatePageRender</td>
@@ -488,70 +434,76 @@ const pageConfig = {
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showDeleteBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showDeleteBtn</td>
 			<td>是否显示删除按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index,tool){return false}</td>
 			<td>true</td>
 		</tr>
 		<tr>
-			<td>deleteBtnPermCode</td>
-			<td>删除按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
+			<td>moreBtnType</td>
+			<td>更多操作按钮显示类型</td>
+			<td>rounding | menu</td>
+			<td>rounding</td>
 		</tr>
 		<tr>
 			<td>moreBtnMap</td>
-			<td>更多操作按钮的map数据,[{key: "0",name: "默认的按钮",show: boolean | function(record,index,item){},disabled:boolean}]</td>
+			<td>更多操作按钮的map数据,[{key: "0",name: "默认的按钮", <i class="zero-icon zerod-shengchangzhouqi"></i> show: boolean | function(record,index,item){return true;},disabled:boolean}]</td>
 			<td>array[object]</td>
 			<td>--</td>
 		</tr>
 		<tr>
 			<td>onMoreBtnClick</td>
 			<td>更多操作按钮点击事件，参数有item:当前按钮的map对象，record:当前行的数据</td>
-			<td>function(item, record){}</td>
+			<td>function(item, record,tool){}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>panelBeforeRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> panelBeforeRender</td>
 			<td>列表面板上面的渲染函数</td>
 			<td>function(tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>panelAfterRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> panelAfterRender</td>
 			<td>列表面板下面的渲染函数</td>
 			<td>function(tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>moreContentRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> moreContentRender</td>
 			<td>分页控件下面更多内容的渲染函数</td>
 			<td>function(tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 			<tr>
-			<td>addBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> addBtnDisabled</td>
 			<td>是否禁用新建按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(tool){return false}</td>
 			<td>false</td>
 		</tr>
 		<tr>
-			<td>detailBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> detailBtnDisabled</td>
 			<td>是否禁用详情按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index,tool){return false}</td>
 			<td>false</td>
 		</tr>
 		<tr>
-			<td>updateBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> updateBtnDisabled</td>
 			<td>是否禁用修改按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index,tool){return false}</td>
 			<td>false</td>
 		</tr>
 		<tr>
-			<td>deleteBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> deleteBtnDisabled</td>
 			<td>是否禁用删除按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index,tool){return false}</td>
 			<td>false</td>
+		</tr>
+		<tr>
+			<td>exportSomething</td>
+			<td>是一个获取tool的钩子，相当于组件的componentDidMount</td>
+			<td>function(tool){ myTool=tool }</td>
+			<td>--</td>
 		</tr>
 	</tbody>
 </table>
@@ -562,7 +514,7 @@ const pageConfig = {
 
 pageConfig.list 中的一些函数如`moreContentRender`提供了`tool`参数出来，有如下内容：
 
-`tool`对象不但包含`ZerodMainContext`提供的东西（请查看 上下文/ ZerodMainContext ），比如 tool.showRightModal，还提供如下内容：
+`tool`对象不但包含`ZerodMainContext`提供的东西（请 <span class="z-history-href" data-path="/main/context-doc/ZerodMainContext-doc">查看 上下文/ZerodMainContext</span>），比如 tool.showRightModal，还提供如下内容：
 
 ### tool.getPage
 
@@ -640,14 +592,19 @@ tool.methods 是一个对象，内容如下：
 			<td>删除按钮的点击事件，会触发pageConfig.list.deleteApiInterface函数</td>
 			<td>tool.methods.onDelete(text,record)</td>
 		</tr>
+		<tr>
+			<td>notice</td>
+			<td>是一个对象，弹出提示通告的方式，跟ZmainHOC中的noticeType有关，属性函数有success、error、info、warning，它们的参数有 content:提示内容，config:同antd的 notification 和 message 参数</td>
+			<td>tool.methods.notice.success("操作成功" [,config])</td>
+		</tr>
 	</tbody>
 </table>
 
 <div class="z-doc-titles"></div>
 
-### tool.$router
+### tool.\$router
 
-tool.$router 是一个对象，内容如下：
+tool.\$router 是一个对象，内容如下：
 
 <table>
 	<thead>

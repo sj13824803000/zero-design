@@ -40,8 +40,6 @@ const config = {
 		panelHeader: "树",
 		// 是否显示新建按钮
 		showAddBtn: true,
-		// 新建按钮权限控制代码
-		addBtnPermCode: "",
 		addPageRender: (panel) => {
 			return (
 				<div className="z-panel z-text-center z-margin-bottom-20">
@@ -51,8 +49,6 @@ const config = {
 		},
 		// 是否显示详情按钮
 		showDetailBtn: true,
-		// 详情按钮权限控制代码
-		detailBtnPermCode: "",
 		detailPageRender: (record) => {
 			return (
 				<div className="z-panel z-text-center z-margin-bottom-20">
@@ -137,6 +133,8 @@ export default ZeditorTreeHOC(pageConfig);
 
 ## pageConfig
 
+除了如下的属性，pageConfig 还包含 <span class="z-history-href" data-path="/main/HOC-doc/ZpageWraperHOC-doc">HOC/页面头尾结构：ZpageWrapper</span> 的 props
+
 <table>
 	<thead>
 		<tr>
@@ -147,27 +145,16 @@ export default ZeditorTreeHOC(pageConfig);
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td>pageHeader</td>
-			<td>页头内容,除了show属性(默认false)，其他属性同 组件/ZpageHeader的Props</td>
-			<td>object</td>
-			<td>--</td>
-		</tr>
-		<tr>
-			<td>pageFooter</td>
-			<td>页尾内容,除了show属性(默认true)，其他属性同 组件/pageFooter的Props</td>
-			<td>object</td>
-			<td>--</td>
-		</tr>
-		<tr>
-			<td>hasBodyPadding</td>
-			<td>中间部分是否有padding值</td>
-			<td>boolean</td>
-			<td>true</td>
-		</tr>
-		<tr>
+	    <tr>
 			<td>searchForm</td>
-			<td>查询表单，请看下面的pageConfig.searchForm</td>
+			<td>
+				<p>1、<code>searchForm.defaultExpanded</code> 是否默认展开表单,(默认false)</p>
+				<p>2、<code>searchForm.insertTo</code> 此属性可以是:一个已存在的dom元素 || 一个已存在的dom元素的Id || true || false || (tool)=>{return 一个已存在的dom元素 || 一个已存在的dom元素的Id || true || false}，其用途为：将searchForm插到某个dom元素内,如为true则插到页头显示,(默认false)</p>
+				<p>3、<code>searchForm的其他属性</code>还包含： 请查看 <span class="z-history-href" data-path="/main/component-doc/ZsearchForm-doc">组件/ZsearchForm</span> 的 props  (除了onSearch, onReset, noCollapse ,hidden ,其他都有效)。</p>
+				<p>4、其中<code>searchForm.items</code>的<code>render函数</code>的参数在这里多加tool,如：items:[{render:(form,changeFormItems,tool)=>{},key:"myKey"}]。</p>
+				<p>5、其中<code>searchForm.items</code>的<code>options函数</code>的参数在这里多加tool,如：items:[{options:(tool)=>options}]。</p>
+				<p>6、<code>searchForm</code>的其他<code>函数属性</code>除了原有的参数，还多加tool，如 <code>searchForm.afterItemsRendered</code>:(form,methods,tool)=>{}</p>
+			</td>
 			<td>object</td>
 			<td>--</td>
 		</tr>
@@ -175,29 +162,6 @@ export default ZeditorTreeHOC(pageConfig);
 			<td>tree</td>
 			<td>列表展示，请看下面的pageConfig.tree</td>
 			<td>object</td>
-			<td>--</td>
-		</tr>
-	</tbody>
-</table>
-
-<div class="z-doc-titles"></div>
-
-## pageConfig.searchForm
-
-<table>
-	<thead>
-		<tr>
-			<th>参数</th>
-			<th>说明</th>
-			<th>类型</th>
-			<th>默认值</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>items</td>
-			<td>表单的渲染项，如果为null则不显示查询表单，map结构：{key:表单控件value对应的字段名,lable:表单控件名称,render:渲染表单控件的函数(form,panel)=>{return;},options:<a href="https://ant.design/components/form-cn/" target="_blank">Antd的表单中getFieldDecorator函数的options参数</a>}</td>
-			<td>array[object] | null</td>
 			<td>--</td>
 		</tr>
 	</tbody>
@@ -218,9 +182,9 @@ export default ZeditorTreeHOC(pageConfig);
 	</thead>
 	<tbody>
 		<tr>
-			<td>panelHeader</td>
-			<td>列表面板的头部内容,为null则不显示面板头部</td>
-			<td>string | function(){return ;}</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> panelHeader</td>
+			<td>列表面板的头部内容,为null则不显示面板头部。也可以是一个对象：{left:(tool)=>span,center:(tool)=>span,right:(tool)=>span,}</td>
+			<td>string | (tool)=>span | object</td>
 			<td>列表</td>
 		</tr>
 		<tr>
@@ -231,7 +195,7 @@ export default ZeditorTreeHOC(pageConfig);
 		</tr>
 		<tr>
 			<td>treeApiInterface</td>
-			<td>获取树列表数据的后台接口函数,其必须返回Promise,参数有query:查询表单相关值</td>
+			<td>获取树列表数据的后台接口函数,其必须返回Promise,参数有query:查询表单相关值。</td>
 			<td>(query,tool) => Promise对象</td>
 			<td>--</td>
 		</tr>
@@ -248,16 +212,10 @@ export default ZeditorTreeHOC(pageConfig);
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showAddBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showAddBtn</td>
 			<td>是否显示新增按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>true</td>
-		</tr>
-		<tr>
-			<td>addBtnPermCode</td>
-			<td>新增按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
 		</tr>
 		<tr>
 			<td>addPageRender</td>
@@ -266,16 +224,22 @@ export default ZeditorTreeHOC(pageConfig);
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showDetailBtn</td>
-			<td>是否显示详情按钮</td>
-			<td>boolean | function</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showAddChildBtn</td>
+			<td>是否显示新增子节点按钮</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>true</td>
 		</tr>
 		<tr>
-			<td>detailBtnPermCode</td>
-			<td>详情按钮权限控制代码</td>
-			<td>string</td>
+			<td>addChildPageRender</td>
+			<td>新增子节点按钮打开的页面渲染函数,如果函数return false,此函数相当于按钮点击事件的回调；tool参数是列表组件的内部提供的一些工具方法</td>
+			<td>function(tool){return ReacNode|Element}</td>
 			<td>--</td>
+		</tr>
+		<tr>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showDetailBtn</td>
+			<td>是否显示详情按钮</td>
+			<td>boolean | function(record,index){return false}</td>
+			<td>true</td>
 		</tr>
 		<tr>
 			<td>detailPageRender</td>
@@ -284,16 +248,10 @@ export default ZeditorTreeHOC(pageConfig);
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showUpdateBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showUpdateBtn</td>
 			<td>是否显示修改按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>true</td>
-		</tr>
-		<tr>
-			<td>updateBtnPermCode</td>
-			<td>修改按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
 		</tr>
 		<tr>
 			<td>updatePageRender</td>
@@ -302,20 +260,20 @@ export default ZeditorTreeHOC(pageConfig);
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>showDeleteBtn</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> showDeleteBtn</td>
 			<td>是否显示删除按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>true</td>
 		</tr>
 		<tr>
-			<td>deleteBtnPermCode</td>
-			<td>删除按钮权限控制代码</td>
-			<td>string</td>
-			<td>--</td>
+			<td>moreBtnType</td>
+			<td>更多操作按钮显示类型</td>
+			<td>rounding | menu</td>
+			<td>rounding</td>
 		</tr>
 		<tr>
 			<td>moreBtnMap</td>
-			<td>更多操作按钮的map数据,[{key: "0",name: "默认的按钮",}]</td>
+			<td>更多操作按钮的map数据,[{key: "0",name: "默认的按钮", <i class="zero-icon zerod-shengchangzhouqi"></i> show: boolean | function(record,index,item){return true;},disabled:boolean}]</td>
 			<td>array[object]</td>
 			<td>--</td>
 		</tr>
@@ -326,46 +284,58 @@ export default ZeditorTreeHOC(pageConfig);
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>panelBeforeRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> panelBeforeRender</td>
 			<td>列表面板上面的渲染函数</td>
 			<td>function(tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>panelAfterRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> panelAfterRender</td>
 			<td>列表面板下面的渲染函数</td>
 			<td>function(tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>moreContentRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> moreContentRender</td>
 			<td>分页控件下面更多内容的渲染函数</td>
 			<td>function(tool){return ReacNode|Element;}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>addBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> addBtnDisabled</td>
 			<td>是否禁用新建按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>false</td>
 		</tr>
 		<tr>
-			<td>detailBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> addChildBtnDisabled</td>
+			<td>是否禁用新建按钮</td>
+			<td>boolean | function(record,index){return false}</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> detailBtnDisabled</td>
 			<td>是否禁用详情按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>false</td>
 		</tr>
 		<tr>
-			<td>updateBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> updateBtnDisabled</td>
 			<td>是否禁用修改按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>false</td>
 		</tr>
 		<tr>
-			<td>deleteBtnDisabled</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> deleteBtnDisabled</td>
 			<td>是否禁用删除按钮</td>
-			<td>boolean | function</td>
+			<td>boolean | function(record,index){return false}</td>
 			<td>false</td>
+		</tr>
+		<tr>
+			<td>exportSomething</td>
+			<td>是一个获取tool的钩子，相当于组件的componentDidMount</td>
+			<td>function(tool){ myTool=tool }</td>
+			<td>--</td>
 		</tr>
 	</tbody>
 </table>
@@ -376,7 +346,7 @@ export default ZeditorTreeHOC(pageConfig);
 
 pageConfig.tree 中的一些函数如`moreContentRender`提供了`tool`参数出来，有如下内容：
 
-`tool`对象不但包含`ZerodMainContext`提供的东西（请查看 上下文/ ZerodMainContext ），比如 tool.showRightModal，还提供如下内容：
+`tool`对象不但包含`ZerodMainContext`提供的东西（请 <span class="z-history-href" data-path="/main/context-doc/ZerodMainContext-doc">查看 上下文/ZerodMainContext</span> ），比如 tool.showRightModal，还提供如下内容：
 
 ### tool.getSearchQuery
 
@@ -407,8 +377,18 @@ tool.methods 是一个对象，内容如下：
 		</tr>
 		<tr>
 			<td>removeOneData</td>
-			<td>移除当前树的一条数据，参数有rowData:一节点的数据 或者 对应pageConfig.tree.treeDataKeys.id的数据(默认是id)，如传入 {id:5}，则会移除列表数据中id=5的那一条 </td>
+			<td>移除当前树的一条数据，参数有rowData:一节点的数据 或者 对应pageConfig.tree.treeDataKeys.id的数据(默认是id)，如tool.methods.removeOneData({id:5})，则会移除列表数据中id=5的那一条 </td>
 			<td>tool.methods.removeOneData({id:5})</td>
+		</tr>
+		<tr>
+			<td>replaceOneData</td>
+			<td>替换当前树的一条数据，参数有rowData:一节点的数据 或者 对应pageConfig.tree.treeDataKeys.id的数据(默认是id),newData:替换的新数据，如tool.methods.replaceOneData({id:5}，newData)，则会替换列表数据中id=5的那一条 </td>
+			<td>tool.methods.replaceOneData({id:5}，newData)</td>
+		</tr>
+		<tr>
+			<td>addOneChildData</td>
+			<td>在当前树的一条数据中新增一条子数据，参数有rowData:一节点的数据 或者 对应pageConfig.tree.treeDataKeys.id的数据(默认是id),newData:新增的子数据，如tool.methods.addOneChildData({id:5}，newData)，则会在列表数据中id=5的那一条数据的children里新增newData </td>
+			<td>tool.methods.addOneChildData({id:5}，newData)</td>
 		</tr>
 		<tr>
 			<td>openModal</td>
@@ -435,6 +415,12 @@ tool.methods 是一个对象，内容如下：
 			<td>新增按钮的点击事件，会触发pageConfig.tree.addPageRender函数</td>
 			<td>tool.methods.onAdd()</td>
 		</tr>
+		</tr>
+			<tr>
+			<td>onAddChild</td>
+			<td>新增子节点按钮的点击事件，会触发pageConfig.tree.addChildPageRender函数</td>
+			<td>tool.methods.onAddChild()</td>
+		</tr>
 		<tr>
 			<td>onUpdate</td>
 			<td>修改按钮的点击事件，会触发pageConfig.tree.updatePageRender函数</td>
@@ -450,14 +436,19 @@ tool.methods 是一个对象，内容如下：
 			<td>删除按钮的点击事件，会触发pageConfig.tree.deleteApiInterface函数</td>
 			<td>tool.methods.onDelete(text,record)</td>
 		</tr>
+		<tr>
+			<td>notice</td>
+			<td>是一个对象，弹出提示通告的方式，跟ZmainHOC中的noticeType有关，属性函数有success、error、info、warning，它们的参数有 content:提示内容，config:同antd的 notification 和 message 参数</td>
+			<td>tool.methods.notice.success("操作成功" [,config])</td>
+		</tr>
 	</tbody>
 </table>
 
 <div class="z-doc-titles"></div>
 
-### tool.$router
+### tool.\$router
 
-tool.$router 是一个对象，内容如下：
+tool.\$router 是一个对象，内容如下：
 
 <table>
 	<thead>

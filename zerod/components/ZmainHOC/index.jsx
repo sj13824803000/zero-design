@@ -28,12 +28,14 @@ function getConstNames(witch) {
 
 class CollapseBtn extends React.Component {
 	render() {
+		const {collapseBtnRender,collapsed}=this.props;
+		const icon = typeof collapseBtnRender=='function'?collapseBtnRender(collapsed):<Icon type={ collapsed ? "menu-unfold" : "menu-fold"} />
 		return (
 			<Zlayout.ZheaderBtn
 				onClick={this.props.onClick && this.props.onClick}
 				className="z-padding-left-24-important z-padding-right-24-important z-font-size-20"
 			>
-				<Icon type={this.props.collapseIcon} />
+				{icon}
 			</Zlayout.ZheaderBtn>
 		);
 	}
@@ -42,6 +44,7 @@ class CollapseBtn extends React.Component {
 export function ZmainHOC(pageConfig) {
 	pageConfig = pageConfig ? pageConfig : {};
 	let defaultConfig = {
+		noticeType:"notification", //notification | message
 		// 左侧边展开时的宽度
 		leftExpandWidth: 240,
 		showCollapseBtn: true, //boolean | function
@@ -60,6 +63,7 @@ export function ZmainHOC(pageConfig) {
 		globalLoading: <div />,
 		// 导航
 		sideMenu: {
+			collapseBtnRender:null,
 			openAllSubmenu: false,
 			topOtherMenu: [],
 			bottomOtherMenu: [],
@@ -132,7 +136,8 @@ export function ZmainHOC(pageConfig) {
 			this.sideMenuData = zTool.formatterMapKey(
 				[...topOtherMenu, ...menuData, ...bottomOtherMenu],
 				this.config.sideMenu.mapKeys,
-				this.config.sideMenu.noParentPath ? false : `${this.props.match.url}/`,
+				`${this.props.match.url}/`,
+				this.config.sideMenu.noParentPath,
 			);
 		}
 		methods = {
@@ -153,11 +158,11 @@ export function ZmainHOC(pageConfig) {
 				return zTool.deepCopy(this.userInfoStorage);
 			},
 			collapseToggleEnd: () => {
-				this.config.beforeToggleCollapse && this.config.afterToggleCollapse(this.state.isCollapse);
+				this.config.afterToggleCollapse && this.config.afterToggleCollapse(this.state.isCollapse,this.tool);
 			},
 			//折叠按钮点击触发
 			collapseBtnClick: () => {
-				this.config.beforeToggleCollapse && this.config.beforeToggleCollapse(this.state.isCollapse);
+				this.config.beforeToggleCollapse && this.config.beforeToggleCollapse(this.state.isCollapse,this.tool);
 				this.setState({
 					isCollapse: !this.state.isCollapse,
 				});
@@ -259,6 +264,7 @@ export function ZmainHOC(pageConfig) {
 			setTemporaryStorage: this.methods.setTemporaryStorage,
 			getInsertLocation:const_getInsertLocation,
 			$router: this.$router,
+			noticeType:this.config.noticeType,
 		};
 		closeRightModal = (witch) => {
 			const { show_name } = getConstNames(witch);
@@ -326,7 +332,6 @@ export function ZmainHOC(pageConfig) {
 		}
 		getTemplate() {
 			const leftWidth = this.state.isCollapse ? 80 : this.config.leftExpandWidth;
-			const collapseIcon = this.state.isCollapse ? "menu-unfold" : "menu-fold";
 			const _showCollapseBtn =
 				typeof this.config.showCollapseBtn == "function"
 					? this.config.showCollapseBtn(this)
@@ -354,7 +359,7 @@ export function ZmainHOC(pageConfig) {
 										collapsed={this.state.isCollapse}
 										theme={this.config.theme}
 										openAllSubmenu={this.config.sideMenu.openAllSubmenu}
-										iconTheme={this.config.sideMenu.iconTheme}
+										onSelect={this.config.sideMenu.onSelect}
 									/>
 								</div>
 							</Zlayout.Zbody>
@@ -365,7 +370,8 @@ export function ZmainHOC(pageConfig) {
 									{_showCollapseBtn ? (
 										<CollapseBtn
 											onClick={this.methods.collapseBtnClick}
-											collapseIcon={collapseIcon}
+											collapsed={this.state.isCollapse}
+											collapseBtnRender={this.config.sideMenu.collapseBtnRender}
 										/>
 									) : null}
 									{typeof this.config.headerLeftRender === "function" &&

@@ -40,8 +40,9 @@ class Zinfo extends React.Component {
 				<span>加载中...</span>;
 			},
 			this.props.fieldValue,
+			undefined,
+			const_execAsync.bind(this),
 		);
-		const_execAsync.call(this);
 	}
 	setFieldValue() {
 		if (this.props.fieldValue)
@@ -53,11 +54,11 @@ class Zinfo extends React.Component {
 		this.execAsync();
 	}
 	componentDidUpdate(prevProps, prevState) {
-		if (
-			(this.props.fieldValue !== prevProps.fieldValue || this.state.items !== prevState.items) &&
-			!this.allAsync.length
-		) {
+		if (this.props.fieldValue !== prevProps.fieldValue) {
 			this.setFieldValue();
+		}
+		if (this.props.items !== prevProps.items && !this.allAsync.length) {
+			this.execAsync();
 		}
 	}
 	getItems() {

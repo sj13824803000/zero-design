@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 
 import App from "./App";
+import "./antd-vars.less";
 import "./app.scss";
 function didRoot(App) {
 	render(
@@ -16,8 +17,5 @@ function didRoot(App) {
 didRoot(App);
 
 if (module.hot) {
-	module.hot.accept("./App", () => {
-		const App = require("./App");
-		didRoot(App);
-	});
+	module.hot.accept();
 }

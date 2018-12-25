@@ -1,25 +1,47 @@
-
 @import "../ant-theme-vars";
-
+$--primary-color:$primary-color;
+$--primary-1:lighten($--primary-color,55%);
+$--primary-2:lighten($--primary-color,40%);
+$--primary-3:lighten($--primary-color,30%);
+$--primary-4:lighten($--primary-color,20%);
+$--primary-5:lighten($--primary-color,10%);
+$--primary-6:lighten($--primary-color,8%);
+$--primary-7:lighten($--primary-color,6%);
+$--primary-8:lighten($--primary-color,4%);
+$--primary-9:lighten($--primary-color,2%);
 :global {
 	body{
         .ant-btn-primary:not([disabled]) {
-            //background-image: linear-gradient(90deg, $--blue-tint 0%, $--blue-deep 100%);
-            &:hover,&:focus,&:active{
-                background-image:none;
+            background-image: linear-gradient(90deg, $--blue-tint 0%, $--blue-deep 100%);
+            background-color:$--blue-tint;
+            border-color: $--blue-tint;
+            &:hover,&:focus{
+                background-image: linear-gradient(90deg, $--blue-tint 0%, $--blue-tint 100%);
+            }
+            &:active{
+                background-image: linear-gradient(90deg, $--blue-deep 0%, $--blue-deep 100%);
+            }
+        }
+        .ant-btn-primary.z-btn-green:not([disabled]) {
+            background-image: linear-gradient(90deg, $--green-tint 0%, $--green-deep 100%);
+            background-color:$--green-tint;
+            border-color: $--green-tint;
+            &:hover,&:focus{
+                background-image: linear-gradient(90deg, $--green-tint 0%, $--green-tint 100%);
+            }
+            &:active{
+                background-image: linear-gradient(90deg, $--green-deep 0%, $--green-deep 100%);
             }
         }
         .ant-btn-danger:not([disabled]){
-            //background-image: linear-gradient(90deg, $--red-tint 0%, $--red-color 100%);
+            background-image: linear-gradient(90deg, $--red-tint 0%, $--red-deep 100%);
+            background-color:$--red-tint;
+            border-color: $--red-tint;
             &:hover,&:focus{
-                background-image:none;
-                background-color:$--red-tint;
-                border-color:$--red-tint;
+                background-image: linear-gradient(90deg, $--red-tint 0%, $--red-tint 100%);
             }
             &:active{
-                background-image:none;
-                background-color:$--red-color;
-                border-color:$--red-color;
+                background-image: linear-gradient(90deg, $--red-deep 0%, $--red-deep 100%);
             }
         }
         $--ra:$btn-border-radius-base;
@@ -31,6 +53,6 @@
               border-bottom-right-radius: $--ra;
             }
         }
-
+  
     }
 }

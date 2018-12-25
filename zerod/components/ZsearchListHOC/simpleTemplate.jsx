@@ -10,15 +10,16 @@ import cssClass from "./style.scss";
 import { deepCopy } from "zerod/components/zTool";
 
 export default function simpleTemplate() {
+	const tool = this.getExportSomething();
 	const _cardSpan = this.props.cardSpan;
 	const _span = typeof _cardSpan == "number" ? { md: _cardSpan } : _cardSpan;
-	const contentColumns = deepCopy(this.tableColumns);
+	const contentColumns = deepCopy(this.state.tableColumns);
 	const actionCol = contentColumns[contentColumns.length - 1];
 	if (actionCol && actionCol.key == "actionBtns") {
 		contentColumns.pop();
 	}
 	let sorters = [];
-	this.tableColumns.forEach((col, index) => {
+	this.state.tableColumns.forEach((col, index) => {
 		if (col.sorter) {
 			sorters.push(
 				<ZsorterBtn
@@ -45,12 +46,10 @@ export default function simpleTemplate() {
 	});
 	return (
 		<Zlayout.Template>
-			{this.props.panelBeforeRender && this.props.panelBeforeRender(this.getExportSomething())}
+			{this.props.panelBeforeRender && this.props.panelBeforeRender(tool)}
 			<div className="z-panel z-margin-bottom-15 is-radius-top">
 				{this.getPanleHeader()}
-				{this.searchForm ? (
-					<div className="z-panel-body z-padding-bottom-0-important">{this.searchForm}</div>
-				) : null}
+				{this.searchForm}
 			</div>
 			{sorters.length ? <div className="z-margin-bottom-15">{sorters}</div> : null}
 			<div className="z-panel z-margin-bottom-15">
@@ -64,7 +63,7 @@ export default function simpleTemplate() {
 												item[actionCol.dataIndex],
 												item,
 												i,
-												this.getExportSomething(),
+												tool,
 												this.state.isListCard,
 										  )
 										: [];
@@ -76,7 +75,7 @@ export default function simpleTemplate() {
 								const getColContent = (col) => {
                                     if(!col)return null;
 									return typeof col.render === "function"
-										? col.render(item[col.dataIndex], item, i, this.getExportSomething())
+										? col.render(item[col.dataIndex], item, i, tool)
 										: item[col.dataIndex];
 								};
 								let _title = contentColumns[0];
@@ -101,7 +100,7 @@ export default function simpleTemplate() {
 														this.props.cardCoverRender(
 															item,
 															i,
-															this.getExportSomething(),
+															tool,
 															_ic,
 															item.hsl,
 														)
@@ -163,7 +162,7 @@ export default function simpleTemplate() {
 				</div>
 			) : null}
 			{this.moreBtn}
-			{this.props.panelAfterRender && this.props.panelAfterRender(this.getExportSomething())}
+			{this.props.panelAfterRender && this.props.panelAfterRender(tool)}
 		</Zlayout.Template>
 	);
 }

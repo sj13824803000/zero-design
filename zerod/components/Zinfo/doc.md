@@ -66,7 +66,7 @@ class Myjavascript extends React.Component {
 	<tbody>
 		<tr>
 			<td>items</td>
-			<td>json数组，请看下面的items结构</td>
+			<td>json数组，请看下面的items结构, (请使用变量缓存所需设置的值而非直接使用字面量)</td>
 			<td>array</td>
 			<td>--</td>
 		</tr>
@@ -78,7 +78,7 @@ class Myjavascript extends React.Component {
 		</tr>
 		<tr>
 			<td>fieldValue</td>
-			<td>对应items中key属性的map对象</td>
+			<td>对应items中key属性的map对象, (请使用变量缓存所需设置的值而非直接使用字面量)</td>
 			<td>object</td>
 			<td>--</td>
 		</tr>
@@ -119,8 +119,8 @@ class Myjavascript extends React.Component {
 			<td>160px</td>
 		</tr>
 		<tr>
-			<td>render</td>
-			<td>自定义value钩子,render函数必须return一个函数。如果异步加载自定义内容：必须return的是Promise对象。例如使用了后台接口：(form)=>api.getOptions.then(re=>{return (value,record)=>自定义内容)})</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> render</td>
+			<td>自定义value钩子,render函数必须return一个函数。如果异步加载自定义内容：必须return的是Promise对象(这时候then回调里需return一个函数)。例如使用了后台接口：(form)=>api.getOptions.then(re=>{return <i class="zero-icon zerod-shengchangzhouqi"></i>  (value,record)=>自定义内容)})</td>
 			<td>()=>{return function(value,record){return 自定义内容})}</td>
 			<td>--</td>
 		</tr>

@@ -1,27 +1,30 @@
 import React from "react";
+import "../../zero-icon/iconfont.css";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
-	const_showLoading,
-	const_getModalType,
 	const_getPanleHeader,
 	const_getListConfig,
 	const_getInsertLocation,
 	const_getMainTool,
-	const_insertLocations,
+	const_getMethods,
+	const_extendPanelFormConfig,
+	const_getPanelDefaultFormItems,
+	const_searchFormNode,
 } from "../constant";
-import { Button, Icon, Divider, Dropdown, Menu, Modal, message, Tooltip } from "antd";
-import { ZsearchForm } from "../ZsearchForm";
+import { Button, Icon, Divider, Dropdown, Menu, Modal } from "antd";
+
 import cssClass from "./style.scss";
 // 上下文
 import ZerodMainContext from "../ZerodMainContext";
 import ZerodRootContext from "../ZerodRootContext";
-import { dataTypeTest, deepCopy } from "../zTool";
+import { deepCopy, dataType, addClass, removeClass } from "../zTool";
 
 import tableTemplate from "./tableTemplate";
 import cardTemplate from "./cardTemplate";
 import simpleTemplate from "./simpleTemplate";
 let defaultConfig = const_getListConfig("list", "ZlistPanel");
+import { ZroundingButton } from "../ZroundingButton";
 class ZlistPanel extends React.Component {
 	static propTypes = {
 		listType: PropTypes.string, // table | card
@@ -38,9 +41,10 @@ class ZlistPanel extends React.Component {
 		]), //面板title,可以自定义
 		moreContentRender: PropTypes.func,
 		searchForm: PropTypes.object,
-		colFormItems: PropTypes.arrayOf(PropTypes.object), // 搜索表单列map数据数据
+		colFormItems: PropTypes.arrayOf(PropTypes.object), // 搜索表单列map数据数据,同searchForm.items （版本兼容）
 		tableColumns: PropTypes.arrayOf(PropTypes.object), // 表格列map数据数据，同antd的表格 columns
 		moreBtnMap: PropTypes.arrayOf(PropTypes.object), //更多操作按钮的map数据
+		moreBtnType: PropTypes.string, // menu | rounding
 		onMoreBtnClick: PropTypes.func, // 更多按钮点击事件
 		actionColumnWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), //表格操作列的宽度
 		actionDataIndex: PropTypes.any, // 操作列的key
@@ -73,36 +77,46 @@ class ZlistPanel extends React.Component {
 
 	hasMoreMenu = this.props.moreBtnMap && this.props.moreBtnMap.length;
 	//更多操作按钮
-	moreMenu = (record, index, otherItem) => {
+	moreMenu = (record, index) => {
+		const tool = this.getExportSomething();
 		const onClick = this.methods.handleMenuClick(record);
-		const items = otherItem ? [otherItem] : [];
+		const items = [];
 		this.hasMoreMenu &&
 			this.props.moreBtnMap.forEach((item) => {
-				const { show, name, ...others } = item;
-				const _show = typeof show == "function" ? show(record, index, item) : show === undefined ? true : show;
-				if (_show) items.push(<Menu.Item {...others}>{name}</Menu.Item>);
+				const { show, disbaled, name, ...others } = item;
+				const _show =
+					typeof show == "function" ? show(record, index, item, tool) : show === undefined ? true : show;
+				const _disbaled =
+					typeof disbaled == "function"
+						? disbaled(record, index, item, tool)
+						: disbaled === undefined
+						? false
+						: disbaled;
+				if (this.props.moreBtnType == "rounding") {
+					items.push({
+						...item,
+						show: _show,
+						disabled: _disbaled,
+						onClick: onClick,
+					});
+				} else if (_show)
+					items.push(
+						<Menu.Item disabled={_disbaled} {...others}>
+							{name}
+						</Menu.Item>,
+					);
 			});
-		return items.length ? <Menu onClick={onClick}>{items}</Menu> : <span />;
+		return this.props.moreBtnType == "rounding" ? (
+			items
+		) : items.length ? (
+			<Menu onClick={onClick}>{items}</Menu>
+		) : (
+			<span />
+		);
 	};
-	state = {
-		listData: [],
-		noMore: false,
-		isListCard: this.props.listType === "card",
-		colFormItems: [],
-	};
-	isInfinite = this.props.paginationType === "infinite";
-	getPageSize = () => {
-		return this.props.getPageSize(this.props.listType, this.state.isListCard);
-	};
-	page = {
-		pageNumber: 1,
-		pageSize: this.getPageSize(),
-		totalCount: 0,
-		totalPage: 1,
-	};
-	searchQuery = null;
-	sorter = {};
+
 	methods = {
+		...const_getMethods.call(this),
 		handleMenuClick: (record) => {
 			return (item) => {
 				if (item.key === "_delete") {
@@ -112,13 +126,10 @@ class ZlistPanel extends React.Component {
 				}
 			};
 		},
-		showLoading: (show) => {
-			const_showLoading(this.insertLocation, this.props)(show);
-		},
 		// 获取列表数据
 		getListData: (merge, moreQuery) => {
 			let querys = this.searchQuery ? this.searchQuery : {};
-			if (dataTypeTest(moreQuery) === "object") {
+			if (dataType.isObject(moreQuery)) {
 				this.page.pageNumber = moreQuery.pageNumber ? moreQuery.pageNumber : this.page.pageNumber;
 				this.page.pageSize = moreQuery.pageSize ? moreQuery.pageSize : this.page.pageSize;
 				querys = Object.assign({}, querys, moreQuery);
@@ -157,7 +168,7 @@ class ZlistPanel extends React.Component {
 					this.methods.setDataState(list, merge);
 				})
 				.catch((re) => {
-					message.error(re && re.msg ? re.msg : "获取数据失败");
+					this.methods.notice.error(re && re.msg ? re.msg : "获取数据失败");
 				})
 				.finally((re) => {
 					this.methods.showLoading(false);
@@ -257,7 +268,7 @@ class ZlistPanel extends React.Component {
 		// 删除按钮触发
 		onDelete: (text, row) => {
 			Modal.confirm({
-				title: `确认删除 [${text}] 这条数据吗`,
+				title: `确认删除 ${text ? `[${text}]` : ""} 这条数据吗`,
 				content: "将永久删除",
 				okText: "删除",
 				okType: "danger",
@@ -267,26 +278,17 @@ class ZlistPanel extends React.Component {
 						this.props
 							.deleteApiInterface(row, this.getExportSomething())
 							.then((re) => {
-								message.success("删除成功");
+								this.methods.notice.success("删除成功");
 								this.methods.removeOneData(row);
 								resolve();
 							})
 							.catch((re) => {
-								message.error(re && re.msg ? re.msg : "删除失败");
+								this.methods.notice.error(re && re.msg ? re.msg : "删除失败");
 								rejects();
 							});
 					});
 				},
 			});
-		},
-		openModal: (content) => {
-			content &&
-				this.props.showRightModal &&
-				this.props.showRightModal(true, const_getModalType(this.insertLocation), content);
-		},
-		closeCurrentModal: () => {
-			if (this.insertLocation !== const_insertLocations.mainRoute)
-				this.props.showRightModal && this.props.showRightModal(false, this.insertLocation);
 		},
 		onAdd: () => {
 			const content = this.props.addPageRender(this.getExportSomething());
@@ -306,7 +308,7 @@ class ZlistPanel extends React.Component {
 		},
 		openSearch: () => {
 			this.setState({
-				colFormItems: this.state.colFormItems.length ? [] : this.props.colFormItems,
+				expandedSearch: !this.state.expandedSearch,
 			});
 		},
 		//外部可以通过这个函数获取当前列表中的数据，
@@ -321,6 +323,11 @@ class ZlistPanel extends React.Component {
 			this.setState({
 				listData: merge ? [...this.state.listData, ...data] : data,
 				noMore,
+			});
+		},
+		checkColumnsChange: (checkValue) => {
+			this.setState({
+				tableColumns: this.getShowTableColumns(checkValue),
 			});
 		},
 	};
@@ -364,33 +371,28 @@ class ZlistPanel extends React.Component {
 						key: "actionBtns",
 						width: this.props.actionColumnWidth,
 						render: (text, record, index) => {
+							const tool = this.getExportSomething();
 							if (typeof this.props.actionRender === "function") {
-								return this.props.actionRender(
-									text,
-									record,
-									index,
-									this.getExportSomething(),
-									this.props.listType,
-								);
+								return this.props.actionRender(text, record, index, tool, this.props.listType);
 							}
 							const _showDetailBtn =
-								typeof showDetailBtn == "function" ? showDetailBtn(record, index) : showDetailBtn;
+								typeof showDetailBtn == "function" ? showDetailBtn(record, index, tool) : showDetailBtn;
 							const _showUpdateBtn =
-								typeof showUpdateBtn == "function" ? showUpdateBtn(record, index) : showUpdateBtn;
+								typeof showUpdateBtn == "function" ? showUpdateBtn(record, index, tool) : showUpdateBtn;
 							const _showDeleteBtn =
-								typeof showDeleteBtn == "function" ? showDeleteBtn(record, index) : showDeleteBtn;
+								typeof showDeleteBtn == "function" ? showDeleteBtn(record, index, tool) : showDeleteBtn;
 
 							const _detailBtnDisabled =
 								typeof detailBtnDisabled == "function"
-									? detailBtnDisabled(record, index)
+									? detailBtnDisabled(record, index, tool)
 									: detailBtnDisabled;
 							const _updateBtnDisabled =
 								typeof updateBtnDisabled == "function"
-									? updateBtnDisabled(record, index)
+									? updateBtnDisabled(record, index, tool)
 									: updateBtnDisabled;
 							const _deleteBtnDisabled =
 								typeof deleteBtnDisabled == "function"
-									? deleteBtnDisabled(record, index)
+									? deleteBtnDisabled(record, index, tool)
 									: deleteBtnDisabled;
 
 							const detailBtnName = "详情";
@@ -453,19 +455,40 @@ class ZlistPanel extends React.Component {
 							const moreBtnName = (
 								<span>
 									<span>更多</span>
-									<Icon type="down" />
+									<i
+										className="zero-icon zerod-up z-open-btn is-down"
+										ref={(el) => {
+											record.moreIconEl = el;
+										}}
+									/>
 								</span>
 							);
-							const moreBtn = (
-								<Dropdown
-									key="more"
-									overlay={this.moreMenu(record, index)}
-									trigger={["click"]}
-									placement="bottomRight"
-								>
-									{this.getDiffBtn("default", moreBtnName)}
-								</Dropdown>
-							);
+							const onVisibleChange = (show) => {
+								if (record.moreIconEl) {
+									show
+										? removeClass(record.moreIconEl, "is-down")
+										: addClass(record.moreIconEl, "is-down");
+								}
+							};
+							const moreBtn =
+								this.props.moreBtnType == "rounding" ? (
+									<ZroundingButton
+										items={this.moreMenu(record, index)}
+										onVisibleChange={onVisibleChange}
+									>
+										{this.getDiffBtn("default", moreBtnName, (e) => e.stopPropagation())}
+									</ZroundingButton>
+								) : (
+									<Dropdown
+										key="more"
+										overlay={this.moreMenu(record, index)}
+										trigger={["click"]}
+										placement="bottomRight"
+										onVisibleChange={onVisibleChange}
+									>
+										{this.getDiffBtn("default", moreBtnName, (e) => e.stopPropagation())}
+									</Dropdown>
+								);
 							if (this.hasMoreMenu) {
 								btns.push(moreBtn);
 							}
@@ -503,11 +526,43 @@ class ZlistPanel extends React.Component {
 			},
 		};
 	}
-
+	checkColumnsValue = this.props.tableColumns
+		.filter((item) => {
+			return !(dataType.isBoolean(item.show) && !item.show);
+		})
+		.map((item) => item.dataIndex).concat(this.props.tableColumns.some(item=>item.dataIndex==this.props.actionDataIndex)?[]:[this.props.actionDataIndex]);
+	getShowTableColumns(checkValue) {
+		return this.tableColumns.filter((item) => {
+			return checkValue.includes(item.dataIndex);
+		});
+	}
+	searchFormConfig = const_extendPanelFormConfig.call(this);
+	colFormItems = const_getPanelDefaultFormItems.call(this);
+	state = {
+		listData: [],
+		noMore: false,
+		isListCard: this.props.listType === "card",
+		tableColumns: this.getShowTableColumns(this.checkColumnsValue),
+		expandedRowKeys: [],
+		expandedSearch: this.searchFormConfig && this.searchFormConfig.defaultExpanded,
+	};
+	isInfinite = this.props.paginationType === "infinite";
+	getPageSize = () => {
+		const tool = this.getExportSomething();
+		return this.props.getPageSize(this.props.listType, this.state.isListCard, tool);
+	};
+	page = {
+		pageNumber: 1,
+		pageSize: this.getPageSize(),
+		totalCount: 0,
+		totalPage: 1,
+	};
+	searchQuery = null;
+	sorter = {};
 	componentDidMount() {
-		this.insertLocation=const_getInsertLocation(this.hocWrapperEl);
-		this.methods.onSearch();
 		this.props.exportSomething && this.props.exportSomething(this.getExportSomething());
+		this.insertLocation = const_getInsertLocation(this.hocWrapperEl);
+		this.methods.onSearch();
 	}
 	render() {
 		this.showPagination =
@@ -530,20 +585,8 @@ class ZlistPanel extends React.Component {
 			) : (
 				this.props.moreContentRender && this.props.moreContentRender(this.getExportSomething())
 			);
-		const { items, onSearch, onReset, noCollapse, ...formOthers } = this.props.searchForm
-			? this.props.searchForm
-			: {};
-		this.searchForm =
-			this.state.colFormItems && this.state.colFormItems.length ? (
-				<ZsearchForm
-					colFormItems={this.state.colFormItems}
-					onSearch={this.methods.onSearch}
-					onReset={this.methods.onReset}
-					noCollapse={true}
-					{...formOthers}
-				/>
-			) : null;
-
+		//this.searchForm赋值
+		const_searchFormNode.call(this);
 		this.paginationOpt = {
 			total: this.page.totalCount,
 			pageSize: this.page.pageSize,
@@ -577,5 +620,7 @@ class ZlistPanel extends React.Component {
 		);
 	}
 }
-ZlistPanel.prototype.getPanleHeader = const_getPanleHeader;
+ZlistPanel.prototype.getPanleHeader = function() {
+	return const_getPanleHeader.call(this, true);
+};
 export default ZerodRootContext.setConsumer(ZerodMainContext.setConsumer(withRouter(ZlistPanel)));

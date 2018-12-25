@@ -4,6 +4,7 @@ import { Zlayout } from "../Zlayout";
 import cssClass from "./style.scss";
 // 表格类型
 export default function tableTemplate() {
+	const tool = this.getExportSomething();
 	const {
 		columns,
 		dataSource,
@@ -13,29 +14,34 @@ export default function tableTemplate() {
 		onExpandedRowsChange,
 		...others
 	} = this.props.tableParams;
+
 	const _expandedRowKeys =
 		typeof expandedRowKeys == "function"
 			? expandedRowKeys()
 			: Array.isArray(expandedRowKeys)
-				? expandedRowKeys
-				: [];
+			? expandedRowKeys
+			: this.state.expandedRowKeys;
 	const _onExpandedRowsChange =
 		typeof onExpandedRowsChange == "function"
 			? (expandedRows) => {
-					onExpandedRowsChange(expandedRows, this.getExportSomething());
+					onExpandedRowsChange(expandedRows, tool);
 			  }
-			: () => {};
+			: (expandedRows) => {
+					this.setState({
+						expandedRowKeys: expandedRows,
+					});
+			  };
 	return (
 		<Zlayout.Template>
-			{this.props.panelBeforeRender && this.props.panelBeforeRender(this.getExportSomething())}
+			{this.props.panelBeforeRender && this.props.panelBeforeRender(tool)}
 			<div className="z-panel">
 				{this.getPanleHeader()}
-				<div className="z-panel-body">
+				<div>
 					{this.searchForm}
 					<div className={cssClass["z-list-table"]}>
 						<Table
 							expandRowByClick={true}
-							columns={this.tableColumns}
+							columns={this.state.tableColumns}
 							rowKey="id"
 							dataSource={this.state.listData}
 							pagination={this.showPagination && !this.isInfinite ? this.paginationOpt : false}
@@ -48,7 +54,7 @@ export default function tableTemplate() {
 					{this.moreBtn}
 				</div>
 			</div>
-			{this.props.panelAfterRender && this.props.panelAfterRender(this.getExportSomething())}
+			{this.props.panelAfterRender && this.props.panelAfterRender(tool)}
 		</Zlayout.Template>
 	);
 }

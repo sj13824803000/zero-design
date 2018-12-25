@@ -11,15 +11,16 @@ import cssClass from "./style.scss";
 
 // 卡片类型
 export default function cardTemplate() {
+	const tool = this.getExportSomething();
 	const _cardSpan = this.props.cardSpan;
 	const _span = typeof _cardSpan == "number" ? { md: _cardSpan } : _cardSpan;
-	const contentColumns = deepCopy(this.tableColumns);
+	const contentColumns = deepCopy(this.state.tableColumns);
 	const actionCol = contentColumns[contentColumns.length - 1];
 	if (actionCol && actionCol.key == "actionBtns") {
 		contentColumns.pop();
 	}
 	let sorters = [];
-	this.tableColumns.forEach((col, index) => {
+	this.state.tableColumns.forEach((col, index) => {
 		if (col.sorter) {
 			sorters.push(
 				<ZsorterBtn
@@ -45,16 +46,14 @@ export default function cardTemplate() {
 		}
 	});
 	const { showAddBtn, addBtnDisabled } = this.props;
-	const _showAddBtn = typeof showAddBtn == "function" ? showAddBtn() : showAddBtn;
-	const _addBtnDisabled = typeof addBtnDisabled == "function" ? addBtnDisabled() : addBtnDisabled;
+	const _showAddBtn = typeof showAddBtn == "function" ? showAddBtn(tool) : showAddBtn;
+	const _addBtnDisabled = typeof addBtnDisabled == "function" ? addBtnDisabled(tool) : addBtnDisabled;
 	return (
 		<Zlayout.Template>
-			{this.props.panelBeforeRender && this.props.panelBeforeRender(this.getExportSomething())}
+			{this.props.panelBeforeRender && this.props.panelBeforeRender(tool)}
 			<div className="z-panel z-margin-bottom-15 is-radius-top">
 				{this.getPanleHeader()}
-				{this.searchForm ? (
-					<div className="z-panel-body z-padding-bottom-0-important">{this.searchForm}</div>
-				) : null}
+				{this.searchForm}
 			</div>
 			{sorters.length ? <div className="z-margin-bottom-15">{sorters}</div> : null}
 			<Row type="flex" className={cssClass["z-card-row"]}>
@@ -80,14 +79,14 @@ export default function cardTemplate() {
 										item[actionCol.dataIndex],
 										item,
 										i,
-										this.getExportSomething(),
+										tool,
 										this.state.isListCard,
 								  )
 								: [];
 						const getColContent = (col) => {
 							if (!col) return null;
 							return typeof col.render === "function"
-								? col.render(item[col.dataIndex], item, i, this.getExportSomething())
+								? col.render(item[col.dataIndex], item, i, tool)
 								: item[col.dataIndex];
 						};
 						let _title = getColContent(contentColumns[0]);
@@ -97,7 +96,7 @@ export default function cardTemplate() {
 									<Card
 										cover={
 											this.props.cardCoverRender &&
-											this.props.cardCoverRender(item, i, this.getExportSomething())
+											this.props.cardCoverRender(item, i, tool)
 										}
 										actions={cardActions}
 										className={cssClass["z-card"]}
@@ -145,7 +144,7 @@ export default function cardTemplate() {
 				</div>
 			) : null}
 			{this.moreBtn}
-			{this.props.panelAfterRender && this.props.panelAfterRender(this.getExportSomething())}
+			{this.props.panelAfterRender && this.props.panelAfterRender(tool)}
 		</Zlayout.Template>
 	);
 }

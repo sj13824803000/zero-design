@@ -102,7 +102,7 @@ class Myjavascript extends React.Component {
 	<tbody>
 		<tr>
 			<td>items</td>
-			<td>生成表单的json数组，请看下面的items结构</td>
+			<td>生成表单的json数组，请看下面的items结构, (请使用变量缓存所需设置的值而非直接使用字面量)</td>
 			<td>array</td>
 			<td>--</td>
 		</tr>
@@ -138,9 +138,33 @@ class Myjavascript extends React.Component {
 		</tr>
 		 <tr>
 			<td>formDefaultValues</td>
-			<td>返显表单的数据，如{serviceName:"名称"}，"serviceName"对应items属性里面的key</td>
+			<td>返显表单的数据，如{serviceName:"名称"}，"serviceName"对应items属性里面的key, (请使用变量缓存所需设置的值而非直接使用字面量)</td>
 			<td>object</td>
 			<td>--</td>
+		</tr>
+		  <tr>
+			<td>getFormInstance</td>
+			<td>获取Form实例的钩子，外部通过(form)=>{this.formIstance=form;}获得form实例对象,通过this.formInstance.调用antd<a href="https://ant.design/components/form-cn/" target="_blank">表单相关方法</a></td>
+			<td>function(form,methods){}</td>
+			<td>--</td>
+		</tr>
+		 <tr>
+			<td>afterItemsRendered</td>
+			<td>所有表单控件渲染完的回调，包括异步渲染控件</a></td>
+			<td>function(form,methods){}</td>
+			<td>--</td>
+		</tr>
+		 <tr>
+			<td>hidden</td>
+			<td>通过改变height隐藏/显示ZsearchForm</a></td>
+			<td>boolean</td>
+			<td>false</td>
+		</tr>
+		 <tr>
+			<td>labelLayout</td>
+			<td>label的布局方式</a></td>
+			<td>'horizontal'|'vertical'</td>
+			<td>'vertical'</td>
 		</tr>
 	</tbody>
 </table>
@@ -171,10 +195,16 @@ class Myjavascript extends React.Component {
 			<td>string</td>
 			<td>--</td>
 		</tr>
+			<tr>
+			<td>labelWidth</td>
+			<td>label的宽度，如labelWidth:"120px"，当labelLayout=='horizontal'才可能用的上</td>
+			<td>string</td>
+			<td>--</td>
+		</tr>
 		<tr>
-			<td>render</td>
-			<td>渲染表单控件的钩子。支持异步加载：必须return的是Promise对象。例如使用了后台接口：(form)=>api.getOptions.then(re=>{return 表单控件})</td>
-			<td>(form)=>{return ReactNode | Element | Promise}</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> render</td>
+			<td>渲染表单控件的钩子。支持异步加载：必须return的是Promise对象。例如使用了后台接口：(form,changeFormItems)=>api.getOptions.then(re=>{return 表单控件})。changeFormItems是一个方法，可用于改变items,可选参数有newItems：changeFormItems(newItems)，但不能直接在render函数中使用，应在控件的事件当中</td>
+			<td>(form,changeFormItems)=>{return ReactNode | Element | Promise}</td>
 			<td>--</td>
 		</tr>
 		<tr>
@@ -196,9 +226,9 @@ class Myjavascript extends React.Component {
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>options</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> options</td>
 			<td><a href="https://ant.design/components/form-cn/" target="_blank">Antd的表单中getFieldDecorator函数的options参数</a>,可以配置验证规则}</td>
-			<td>string</td>
+			<td>object || ()=>options</td>
 			<td>--</td>
 		</tr>
 	</tbody>

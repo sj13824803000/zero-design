@@ -69,11 +69,11 @@ const pageConfig = {
 		mapKeys: { iconClass: "iconClass", path: "permUrl", name: "permName", children: "children" },
 	},
 	// 顶部栏左边内容的渲染钩子
-	headerLeftRender: (main) => {
+	headerLeftRender: (tool) => {
 		return <img className="z-margin-left-20" src={flower} height="60" />;
 	},
 	// 顶部栏右边内容的渲染钩子
-	// headerRightRender: (main) => {
+	// headerRightRender: (tool) => {
 	// 	return ;
 	// },
 	// 侧边栏折叠按钮触发后，过渡动画之前
@@ -145,11 +145,11 @@ const pageConfig = {
 	// 主页的主题 light | dark
 	theme: "dark",
 	// 顶部栏左边内容的渲染钩子
-	headerLeftRender: (main) => {
+	headerLeftRender: (tool) => {
 		return <Zlayout.ZheaderBtn className="z-margin-right-15">左边</Zlayout.ZheaderBtn>;
 	},
 	// 顶部栏右边内容的渲染钩子
-	headerRightRender: (main) => {
+	headerRightRender: (tool) => {
 		return (
 			<Zlayout.Template>
 				<Zlayout.ZheaderBtn className="z-margin-right-15">按钮1</Zlayout.ZheaderBtn>
@@ -213,7 +213,7 @@ export default ZmainHOC(pageConfig);
 
 ## 重点
 
-在主页中定义了两种打开右边窗口的模式，如需调用打开右边窗口和调用显示 loading 的方法请<a href="/main/context-doc/ZerodMainContext-doc">查看上下文 ZerodMainContext</a>
+在主页中定义了两种打开右边窗口的模式，如需调用打开右边窗口和调用显示 loading 的方法请 <span class="z-history-href" data-path="/main/context-doc/ZerodMainContext-doc">查看 上下文/ZerodMainContext</span>
 
 <div class="z-doc-titles"></div>
 
@@ -229,6 +229,12 @@ export default ZmainHOC(pageConfig);
 		</tr>
 	</thead>
 	<tbody>
+		<tr>
+			<td>noticeType</td>
+			<td>用于配置操作提示通告的方式</td>
+			<td>notification | message</td>
+			<td>message</td>
+		</tr>
 		<tr>
 			<td>leftExpandWidth</td>
 			<td>左侧栏展开时的宽度</td>
@@ -254,7 +260,7 @@ export default ZmainHOC(pageConfig);
 			<td>[]</td>
 		</tr>
 		<tr>
-			<td>globalLoading</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> globalLoading</td>
 			<td>加载前要显示的一个全局loading</td>
 			<td>Element | ReactNode | function(){return ;}</td>
 			<td>--</td>
@@ -266,13 +272,13 @@ export default ZmainHOC(pageConfig);
 			<td>{}</td>
 		</tr>
 		<tr>
-			<td>headerLeftRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> headerLeftRender</td>
 			<td>右侧顶部栏左边内容的渲染钩子,参数有main组件的实例对象</td>
 			<td>function(tool){return ;}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>headerRightRender</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> headerRightRender</td>
 			<td>右侧顶部栏右边内容的渲染钩子,参数有main组件的实例对象</td>
 			<td>function(tool){return ;}</td>
 			<td>--</td>
@@ -280,19 +286,19 @@ export default ZmainHOC(pageConfig);
 		<tr>
 			<td>beforeToggleCollapse</td>
 			<td>侧边栏折叠按钮触发后，过渡动画之前回调,参数有折叠状态collapsed</td>
-			<td>function(collapsed){}</td>
+			<td>function(collapsed,tool){}</td>
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>beforeToggleCollapse</td>
+			<td>afterToggleCollapse</td>
 			<td>侧边栏折叠按钮触发后，过渡动画之后回调,参数有折叠状态collapsed</td>
-			<td>function(collapsed){}</td>
+			<td>function(collapsed,tool){}</td>
 			<td>--</td>
 		</tr>
 		<tr>
 			<td>componentDidMount</td>
 			<td>main组件加载完的钩子,考虑到可能走后台接口,提供一个一定要调用的callback，这个函数可传入两个可选参数:callback(userInfo = {}, menuData = []),userInfo是用户登录后要储存的一个对象，menuData是侧边导航的数据(map结构由pageConfig.sideMenu.mapKeys对应)。$router:是一个对象，提供history和location属性</td>
-			<td>function(callback,$router){}</td>
+			<td>function(callback,$router,tool){}</td>
 			<td>--</td>
 		</tr>
 	</tbody>
@@ -319,7 +325,7 @@ export default ZmainHOC(pageConfig);
 			<td>--</td>
 		</tr>
 		<tr>
-			<td>render</td>
+			<td><i class="zero-icon zerod-shengchangzhouqi"></i> render</td>
 			<td>渲染logo的钩子</td>
 			<td>function(){return ;}</td>
 			<td>--</td>
@@ -341,6 +347,18 @@ export default ZmainHOC(pageConfig);
 		</tr>
 	</thead>
 	<tbody>
+		<tr>
+			<td>collapseBtnRender</td>
+			<td>折叠按钮的渲染函数 (collapsed)=>Icon</td>
+			<td>(collapsed)=>Icon</td>
+			<td>--</td>
+		</tr>
+	    <tr>
+			<td>onSelect</td>
+			<td>点击选中菜单项触发的函数，如果函数内return false 则不会跳转menuData中对应项的path路径</td>
+			<td>function({ item, key, selectedKeys }){}</td>
+			<td>--</td>
+		</tr>
 		<tr>
 			<td>openAllSubmenu</td>
 			<td>侧边导航存在二级导航时，是否打开所有的一级导航</td>
@@ -367,7 +385,7 @@ export default ZmainHOC(pageConfig);
 		</tr>
 		<tr>
 			<td>noParentPath</td>
-			<td>为false时，菜单导航的path会取父路由的path拼接</td>
+			<td>如为true,则菜单导航的path不会与父节点的path拼接</td>
 			<td>boolean</td>
 			<td>false</td>
 		</tr>
@@ -376,6 +394,6 @@ export default ZmainHOC(pageConfig);
 
 <div class="z-doc-titles"></div>
 
-## tool参数
+## tool 参数
 
 `tool`是一个对象，里面的属性同 上下文/ZerodMainContext 提供的内容

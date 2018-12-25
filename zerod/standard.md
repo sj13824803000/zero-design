@@ -14,7 +14,7 @@
 
 6、react : 组件内跟`setState`无关的属性，请不要写进 `state`中。
 
-7、react : 组件的基本写法：
+7、react : v16.7.0之前的react组件写法：
 
 ```jsx
 import React from "react";
@@ -208,7 +208,7 @@ const NewComponent = AshowDemoHOC(config);
 //例如：Home页面有 index.jsx、style.scss和Home.route.js
 // A.route.js写法：
 import lazyLoad from "@/lazyLoad/lazyLoad";
-const Home = lazyLoad(import("./"));
+const Home = lazyLoad(()=>import("./"));
 export default [
 	{
 		path: "/Home",
